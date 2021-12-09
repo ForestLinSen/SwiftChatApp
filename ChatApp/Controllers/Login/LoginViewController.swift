@@ -13,7 +13,7 @@ class LoginViewController: UIViewController {
     
     // container
     private let scrollView: UIScrollView = {
-       let scrollView = UIScrollView()
+        let scrollView = UIScrollView()
         scrollView.clipsToBounds = false
         scrollView.backgroundColor = .white
         
@@ -69,7 +69,7 @@ class LoginViewController: UIViewController {
         button.titleLabel?.font = .systemFont(ofSize: 20, weight: .semibold)
         return button
     }()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .red
@@ -79,7 +79,7 @@ class LoginViewController: UIViewController {
         
         
         navigationController?.navigationBar.tintColor = .white
-
+        
         title = "Log In"
         
         view.addSubview(scrollView)
@@ -89,6 +89,11 @@ class LoginViewController: UIViewController {
         
         scrollView.addSubview(imageView)
         scrollView.addSubview(loginButton)
+        
+        loginButton.addTarget(self, action: #selector(loginButtonTapped), for: .touchUpInside)
+        
+        emailField.delegate = self
+        passwordField.delegate = self
         
         
         // https://stackoverflow.com/questions/56556254/in-ios13-the-status-bar-background-colour-is-different-from-the-navigation-bar-i
@@ -100,20 +105,20 @@ class LoginViewController: UIViewController {
         navBarAppearance.backgroundColor = .systemBlue
         //navigationController?.navigationBar.standardAppearance = navBarAppearance
         navigationController?.navigationBar.scrollEdgeAppearance = navBarAppearance
-
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
     }
-
+    
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-//        imageView.center = CGPoint(x: view.frame.size.width/2-50,
-//                                   y: view.frame.size.height/2-50)
-//        imageView.frame.size.width = 100
-//        imageView.frame.size.height = 100
+        //        imageView.center = CGPoint(x: view.frame.size.width/2-50,
+        //                                   y: view.frame.size.height/2-50)
+        //        imageView.frame.size.width = 100
+        //        imageView.frame.size.height = 100
         
         scrollView.frame = CGRect(x: view.frame.origin.x, y: view.frame.origin.y,
                                   width:  view.frame.size.width, height: view.frame.size.height)
@@ -125,7 +130,7 @@ class LoginViewController: UIViewController {
                                   width: scrollView.frame.size.width - 60, height: 52)
         
         passwordField.frame = CGRect(x: 30, y: emailField.frame.size.height + emailField.frame.origin.y + 15,
-                                  width: scrollView.frame.size.width - 60, height: 52)
+                                     width: scrollView.frame.size.width - 60, height: 52)
         
         loginButton.frame = CGRect(x: 30, y: passwordField.frame.size.height + passwordField.frame.origin.y + 15,
                                    width: scrollView.frame.size.width - 60 , height: 52)
@@ -135,14 +140,48 @@ class LoginViewController: UIViewController {
         
     }
     
+    @objc private func loginButtonTapped(){
+        guard let email = emailField.text, let password = passwordField.text,
+              !email.isEmpty, !password.isEmpty,
+              password.count >= 6 else{
+                  alterUserLoginError()
+                  return
+              }
+        
+        //Firbase login
+    }
+    
+    func alterUserLoginError(){
+        let alert = UIAlertController(title: "Woops", message: "Please enter all information to log in.", preferredStyle: .alert)
+        
+        alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: nil))
+        present(alert, animated: true)
+    }
+    
     @objc private func didTapRegister(){
         print("Register button clicked")
         
         let vc = RegisterViewController()
         vc.title = "Create Account"
         navigationController?.pushViewController(vc, animated: true)
-
+        
     }
+    
+    
+}
 
 
+extension LoginViewController: UITextFieldDelegate{
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        
+        if(textField == emailField){
+            passwordField.becomeFirstResponder()
+        }
+        
+        if(textField == passwordField){
+            loginButtonTapped()
+        }
+        
+        return true
+    }
 }
