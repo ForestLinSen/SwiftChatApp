@@ -14,7 +14,7 @@ class LoginViewController: UIViewController {
     // container
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
-        scrollView.clipsToBounds = false
+        scrollView.clipsToBounds = true
         scrollView.backgroundColor = .white
         
         return scrollView
@@ -141,6 +141,10 @@ class LoginViewController: UIViewController {
     }
     
     @objc private func loginButtonTapped(){
+        
+        emailField.resignFirstResponder()
+        passwordField.resignFirstResponder()
+        
         guard let email = emailField.text, let password = passwordField.text,
               !email.isEmpty, !password.isEmpty,
               password.count >= 6 else{
