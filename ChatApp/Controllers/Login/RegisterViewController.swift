@@ -19,8 +19,11 @@ class RegisterViewController: UIViewController{
     
     let imageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFit
+        imageView.contentMode = .scaleToFill
         imageView.image = UIImage(systemName: "person")
+        imageView.layer.masksToBounds = true
+        imageView.layer.borderWidth = 2
+        imageView.layer.borderColor = UIColor.lightGray.cgColor
         
         return imageView
     }()
@@ -130,6 +133,7 @@ class RegisterViewController: UIViewController{
         let size = view.frame.size.width / 5
         scrollView.frame = view.bounds
         imageView.frame = CGRect(x: (scrollView.frame.size.width - size) / 2, y: 40, width: size , height: size)
+        imageView.layer.cornerRadius = imageView.width/2.0
         
         firstNameField.frame = CGRect(x: 30, y: imageView.frame.origin.y + imageView.frame.size.height + 40,
                                   width: scrollView.frame.size.width - 60, height: 52)
@@ -190,7 +194,18 @@ extension RegisterViewController: UITextFieldDelegate{
 
 extension RegisterViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate, PHPickerViewControllerDelegate{
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
-        
+        picker.dismiss(animated:true) {
+            guard let result = results.first else { return }
+            let prov = result.itemProvider
+            prov.loadObject(ofClass: UIImage.self) { imageMaybe, errorMaybe in
+                if let image = imageMaybe as? UIImage{
+                    DispatchQueue.main.async {
+                        self.imageView.image = image
+                    }
+                }
+            }
+            
+        }
     }
     
     
