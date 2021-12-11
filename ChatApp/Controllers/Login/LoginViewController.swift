@@ -163,7 +163,6 @@ class LoginViewController: UIViewController {
     }
     
     @objc private func didTapRegister(){
-        print("Register button clicked")
         
         let vc = RegisterViewController()
         vc.title = "Create Account"
