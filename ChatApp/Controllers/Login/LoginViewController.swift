@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 // Command + shift + O
 
@@ -36,6 +37,7 @@ class LoginViewController: UIViewController {
         field.layer.borderWidth = 1
         field.layer.borderColor = UIColor.lightGray.cgColor
         field.placeholder = "Email Address"
+        field.text = "joe@aq.com"
         
         // padding
         field.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 20, height: field.frame.size.height))
@@ -52,6 +54,7 @@ class LoginViewController: UIViewController {
         field.layer.borderWidth = 1
         field.layer.borderColor = UIColor.lightGray.cgColor
         field.placeholder = "Password..."
+        field.text = "12345678"
         
         // padding
         field.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 20, height: field.frame.size.height))
@@ -112,6 +115,11 @@ class LoginViewController: UIViewController {
         super.viewWillAppear(animated)
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+    }
+    
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
@@ -152,7 +160,17 @@ class LoginViewController: UIViewController {
                   return
               }
         
+        print("Debug: email and password are ok")
+        
         //Firbase login
+        FirebaseAuth.Auth.auth().signIn(withEmail: email, password: password) { authResult, error in
+            guard error == nil else{
+                print("Debug: log in error")
+                return
+            }
+            
+            print("Debug: login user: \(authResult?.user)")
+        }
     }
     
     func alterUserLoginError(){

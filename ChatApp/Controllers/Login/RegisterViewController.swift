@@ -7,6 +7,7 @@
 
 import UIKit
 import PhotosUI
+import FirebaseAuth
 
 class RegisterViewController: UIViewController{
     
@@ -20,10 +21,10 @@ class RegisterViewController: UIViewController{
     let imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleToFill
-        imageView.image = UIImage(systemName: "person")
+        imageView.image = UIImage(systemName: "person.circle")
         imageView.layer.masksToBounds = true
-        imageView.layer.borderWidth = 2
-        imageView.layer.borderColor = UIColor.lightGray.cgColor
+//        imageView.layer.borderWidth = 2
+//        imageView.layer.borderColor = UIColor.lightGray.cgColor
         
         return imageView
     }()
@@ -130,7 +131,7 @@ class RegisterViewController: UIViewController{
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
-        let size = view.frame.size.width / 5
+        let size = view.frame.size.width / 4
         scrollView.frame = view.bounds
         imageView.frame = CGRect(x: (scrollView.frame.size.width - size) / 2, y: 40, width: size , height: size)
         imageView.layer.cornerRadius = imageView.width/2.0
@@ -154,9 +155,6 @@ class RegisterViewController: UIViewController{
         
     }
     
-
-    
-    
     @objc private func registerButtonTapped(){
         
         emailField.resignFirstResponder()
@@ -166,6 +164,16 @@ class RegisterViewController: UIViewController{
               !firstName.isEmpty, !lastName.isEmpty, !email.isEmpty, !password.isEmpty, password.count > 6 else{
             alertUserRegister()
             return
+        }
+        
+        FirebaseAuth.Auth.auth().createUser(withEmail: email, password: password) { authResult, error in
+            guard let result = authResult, error == nil else{
+                print("Debug: Error in creating user")
+                return
+            }
+            
+            let user = result.user
+            print("Debug: User created: \(user)")
         }
     }
     

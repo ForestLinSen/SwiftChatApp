@@ -12,7 +12,8 @@
 		B944BFA22760F52D006CEDE3 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B944BFA12760F52D006CEDE3 /* Extensions.swift */; };
 		B97BBB992764A0450071D0A9 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = B97BBB982764A0450071D0A9 /* FirebaseAuth */; };
 		B97BBB9B2764A0450071D0A9 /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = B97BBB9A2764A0450071D0A9 /* FirebaseDatabase */; };
-		B97BBB9D2764A12F0071D0A9 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B97BBB9C2764A12F0071D0A9 /* GoogleService-Info.plist */; };
+		B9EEBCC72765DBF7009E0192 /* DabaBaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9EEBCC62765DBF7009E0192 /* DabaBaseManager.swift */; };
+		B9EEBCC92766065A009E0192 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B9EEBCC82766065A009E0192 /* GoogleService-Info.plist */; };
 		F5955CF72732603500C1A5C5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5955CF62732603500C1A5C5 /* AppDelegate.swift */; };
 		F5955CF92732603500C1A5C5 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5955CF82732603500C1A5C5 /* SceneDelegate.swift */; };
 		F5955CFB2732603500C1A5C5 /* ConversationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5955CFA2732603500C1A5C5 /* ConversationViewController.swift */; };
@@ -25,7 +26,8 @@
 		B91FB32C275FBFB50007DC08 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		B91FB32E275FBFE50007DC08 /* RegisterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
 		B944BFA12760F52D006CEDE3 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
-		B97BBB9C2764A12F0071D0A9 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
+		B9EEBCC62765DBF7009E0192 /* DabaBaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DabaBaseManager.swift; sourceTree = "<group>"; };
+		B9EEBCC82766065A009E0192 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
 		F5955CF32732603500C1A5C5 /* ChatApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChatApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F5955CF62732603500C1A5C5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F5955CF82732603500C1A5C5 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -77,7 +79,7 @@
 		F5955CF52732603500C1A5C5 /* ChatApp */ = {
 			isa = PBXGroup;
 			children = (
-				B97BBB9C2764A12F0071D0A9 /* GoogleService-Info.plist */,
+				B9EEBCC82766065A009E0192 /* GoogleService-Info.plist */,
 				F5955D0E27329CD300C1A5C5 /* Controllers */,
 				F5955D0D27329CCD00C1A5C5 /* Views */,
 				F5955D0C27329CC700C1A5C5 /* Models */,
@@ -126,6 +128,7 @@
 			children = (
 				F5955CFA2732603500C1A5C5 /* ConversationViewController.swift */,
 				B91FB330275FC0070007DC08 /* Login */,
+				B9EEBCC62765DBF7009E0192 /* DabaBaseManager.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -205,7 +208,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F5955D032732603700C1A5C5 /* LaunchScreen.storyboard in Resources */,
-				B97BBB9D2764A12F0071D0A9 /* GoogleService-Info.plist in Resources */,
+				B9EEBCC92766065A009E0192 /* GoogleService-Info.plist in Resources */,
 				F5955D002732603700C1A5C5 /* Assets.xcassets in Resources */,
 				F5955CFE2732603500C1A5C5 /* Main.storyboard in Resources */,
 			);
@@ -219,6 +222,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B91FB32D275FBFB50007DC08 /* LoginViewController.swift in Sources */,
+				B9EEBCC72765DBF7009E0192 /* DabaBaseManager.swift in Sources */,
 				B944BFA22760F52D006CEDE3 /* Extensions.swift in Sources */,
 				B91FB32F275FBFE50007DC08 /* RegisterViewController.swift in Sources */,
 				F5955CFB2732603500C1A5C5 /* ConversationViewController.swift in Sources */,
