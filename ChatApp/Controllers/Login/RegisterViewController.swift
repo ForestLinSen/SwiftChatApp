@@ -166,19 +166,36 @@ class RegisterViewController: UIViewController{
             return
         }
         
-        FirebaseAuth.Auth.auth().createUser(withEmail: email, password: password) { authResult, error in
-            guard let result = authResult, error == nil else{
-                print("Debug: Error in creating user")
+        // User object
+        let newUser = ChatAppUser(firstName: firstName, lastName: lastName, emailAddress: email)
+        
+        DatabaseManager.shared.userExists(with: newUser.safeEmail) { [weak self] exist in
+            
+            guard let strongSelf = self else { return }
+            
+            guard !exist else{
+                strongSelf.alertUserRegister(message: "The email address has been registered")
                 return
             }
             
-            let user = result.user
-            print("Debug: User created: \(user)")
+            FirebaseAuth.Auth.auth().createUser(withEmail: email, password: password) {[weak self] authResult, error in
+                
+                guard let strongSelf = self else { return }
+                
+                guard authResult != nil, error == nil else{
+                    print("Debug: Error in creating user")
+                    return
+                }
+                
+                DatabaseManager.shared.insertUser(with: newUser)
+            }
         }
+        
+        
     }
     
-    func alertUserRegister(){
-        let alert = UIAlertController(title: "Woops", message: "Something is wrong with the information you provided", preferredStyle: .alert)
+    func alertUserRegister(message: String = "Something is wrong with the information you provided"){
+        let alert = UIAlertController(title: "Woops", message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: nil))
         
         present(alert, animated: true, completion: nil)
