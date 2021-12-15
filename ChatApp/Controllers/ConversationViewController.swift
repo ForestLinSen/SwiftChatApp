@@ -19,20 +19,19 @@ class ConversationViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        let isLoggedIn = UserDefaults.standard.bool(forKey: "logged_in")
+        //let isLoggedIn = UserDefaults.standard.bool(forKey: "logged_in")
         
         validateAuth()
     }
     
     func validateAuth(){
-        if(FirebaseAuth.Auth.auth().currentUser != nil){
+        if(FirebaseAuth.Auth.auth().currentUser == nil){
             let vc = LoginViewController()
             let nav = UINavigationController(rootViewController: vc)
             nav.modalPresentationStyle = .fullScreen
             present(nav, animated: true, completion: nil)
         }
     }
-
 
 }
 

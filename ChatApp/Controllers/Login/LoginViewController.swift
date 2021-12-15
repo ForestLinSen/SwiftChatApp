@@ -170,6 +170,13 @@ class LoginViewController: UIViewController {
             }
             
             print("Debug: login user: \(authResult?.user)")
+            
+            let vc = ConversationViewController()
+            let nv = UINavigationController(rootViewController: vc)
+            nv.modalPresentationStyle = .fullScreen
+            self.present(nv, animated: true, completion: nil)
+            
+            
         }
     }
     
@@ -190,6 +197,10 @@ class LoginViewController: UIViewController {
     
     
 }
+
+
+// Swift // // 将下列代码添加到文件的头文件中，例如：在 ViewController.swift 中导入 FBSDKLoginKit // 将下列代码添加到正文类 ViewController：UIViewController { override func viewDidLoad() { super.viewDidLoad() let loginButton = FBLoginButton() loginButton.center = view.center view.addSubview(loginButton) } }
+
 
 
 extension LoginViewController: UITextFieldDelegate{
