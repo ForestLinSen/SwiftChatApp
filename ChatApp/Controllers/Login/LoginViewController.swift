@@ -7,6 +7,7 @@
 
 import UIKit
 import FirebaseAuth
+import FBSDKLoginKit
 
 // Command + shift + O
 
@@ -73,6 +74,13 @@ class LoginViewController: UIViewController {
         return button
     }()
     
+    // FaceBook log in button
+    let facebookLoginButton: FBLoginButton = {
+        let button = FBLoginButton()
+        button.permissions = ["email,public_profile"]
+        return button
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .red
@@ -92,11 +100,13 @@ class LoginViewController: UIViewController {
         
         scrollView.addSubview(imageView)
         scrollView.addSubview(loginButton)
+        scrollView.addSubview(facebookLoginButton)
         
         loginButton.addTarget(self, action: #selector(loginButtonTapped), for: .touchUpInside)
         
         emailField.delegate = self
         passwordField.delegate = self
+        facebookLoginButton.delegate = self
         
         
         // https://stackoverflow.com/questions/56556254/in-ios13-the-status-bar-background-colour-is-different-from-the-navigation-bar-i
@@ -143,6 +153,10 @@ class LoginViewController: UIViewController {
         loginButton.frame = CGRect(x: 30, y: passwordField.frame.size.height + passwordField.frame.origin.y + 15,
                                    width: scrollView.frame.size.width - 60 , height: 52)
         
+        facebookLoginButton.center = scrollView.center
+        facebookLoginButton.frame = CGRect(x: 0,
+                                           y: loginButton.frame.origin.y + loginButton.frame.size.height + 15,
+                                           width: scrollView.frame.size.width - 80, height: 52)
         
         
         
@@ -216,4 +230,39 @@ extension LoginViewController: UITextFieldDelegate{
         
         return true
     }
+}
+
+extension LoginViewController: LoginButtonDelegate{
+    func loginButtonDidLogOut(_ loginButton: FBLoginButton) {
+        // No operation
+    }
+    
+    func loginButton(_ loginButton: FBLoginButton, didCompleteWith result: LoginManagerLoginResult?, error: Error?) {
+        guard let token = result?.token?.tokenString else{
+            print("Debug: Error getting token")
+            return
+        }
+        
+        let credential = FacebookAuthProvider.credential(withAccessToken: token)
+        
+        
+        // Credential: 3rd party token
+        FirebaseAuth.Auth.auth().signIn(with: credential) { [weak self] authResult, error in
+            
+            guard let strongSelf = self else{ return }
+            
+            guard authResult != nil, error == nil else{
+                if let error = error {
+                    print("Debug: Error Loging with Facebook - \(error.localizedDescription)")
+                }
+                return
+            }
+            
+            print("Debug: successfully logged user in")
+            strongSelf.navigationController?.dismiss(animated: true, completion: nil)
+            
+        }
+    }
+    
+    
 }
