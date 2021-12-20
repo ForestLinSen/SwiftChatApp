@@ -8,10 +8,16 @@
 import UIKit
 import FirebaseAuth
 import FBSDKLoginKit
+import GoogleSignIn
 
 // Command + shift + O
 
+// Google Sign in : https://developers.google.com/identity/sign-in/ios/sign-in
+
 class LoginViewController: UIViewController {
+    
+    // Google login
+    let signInConfig = GIDConfiguration.init(clientID: "554575304460-5jg3ukppipppashb0pm1l3mqanguhpep.apps.googleusercontent.com")
     
     // container
     private let scrollView: UIScrollView = {
@@ -81,6 +87,12 @@ class LoginViewController: UIViewController {
         return button
     }()
     
+    let googleLoginButton: GIDSignInButton = {
+        let button = GIDSignInButton()
+        button.addTarget(self, action: #selector(googleSignIn), for: .touchUpInside)
+        return button
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .red
@@ -101,12 +113,15 @@ class LoginViewController: UIViewController {
         scrollView.addSubview(imageView)
         scrollView.addSubview(loginButton)
         scrollView.addSubview(facebookLoginButton)
+        scrollView.addSubview(googleLoginButton)
         
         loginButton.addTarget(self, action: #selector(loginButtonTapped), for: .touchUpInside)
         
         emailField.delegate = self
         passwordField.delegate = self
         facebookLoginButton.delegate = self
+        
+
         
         
         // https://stackoverflow.com/questions/56556254/in-ios13-the-status-bar-background-colour-is-different-from-the-navigation-bar-i
@@ -154,9 +169,14 @@ class LoginViewController: UIViewController {
                                    width: scrollView.frame.size.width - 60 , height: 52)
         
         facebookLoginButton.center = scrollView.center
-        facebookLoginButton.frame = CGRect(x: 0,
+        facebookLoginButton.frame = CGRect(x: 30,
                                            y: loginButton.frame.origin.y + loginButton.frame.size.height + 15,
-                                           width: scrollView.frame.size.width - 80, height: 52)
+                                           width: scrollView.frame.size.width - 60, height: 52)
+        
+        googleLoginButton.center = scrollView.center
+        googleLoginButton.frame = CGRect(x: 30,
+                                           y: facebookLoginButton.frame.origin.y + facebookLoginButton.frame.size.height + 15,
+                                           width: scrollView.frame.size.width - 60, height: 52)
         
         
         
@@ -209,6 +229,53 @@ class LoginViewController: UIViewController {
         
     }
     
+    // Google signin button
+    @objc func googleSignIn() {
+      GIDSignIn.sharedInstance.signIn(with: signInConfig, presenting: self) { user, error in
+        guard error == nil else { return }
+
+          guard let user = user, error == nil else{
+              print("Debug: Failed to log user with Google sign in: \(error?.localizedDescription)")
+              return
+          }
+          
+          guard let email = user.profile?.email,
+                let firstName = user.profile?.givenName,
+                let lastName = user.profile?.familyName else{
+                    print("Debug: Failed to retrieve user profile with Google sign in")
+                    return
+                }
+          
+          let chatUser = ChatAppUser(firstName: firstName, lastName: lastName, emailAddress: email)
+          
+          DatabaseManager.shared.userExists(with: chatUser.safeEmail) { exist in
+              if(!exist){
+                  DatabaseManager.shared.insertUser(with: chatUser)
+              }
+              
+              let authentication = user.authentication
+              guard let idToken = authentication.idToken else{
+                       print("Debug: Failed to get user token with Google sign in")
+                       return
+                   }
+             let googleCredential = GoogleAuthProvider.credential(withIDToken: idToken,
+                                                                  accessToken: authentication.accessToken)
+             
+              FirebaseAuth.Auth.auth().signIn(with: googleCredential) {[weak self] result, error in
+                 guard let user = result?.user, error == nil else{
+                     print("Debug: Failed to login user with Google sign in")
+                     return
+                 }
+                 
+                  self?.navigationController?.dismiss(animated: true, completion: nil)
+                 
+             }
+              
+          }
+          
+      }
+    }
+    
     
 }
 
@@ -243,25 +310,63 @@ extension LoginViewController: LoginButtonDelegate{
             return
         }
         
-        let credential = FacebookAuthProvider.credential(withAccessToken: token)
+        let facebookRequest = FBSDKLoginKit.GraphRequest(graphPath: "me",
+                                                         parameters: ["fields": "email, name"],
+                                                         tokenString: token,
+                                                         version: nil,
+                                                         httpMethod: .get)
         
-        
-        // Credential: 3rd party token
-        FirebaseAuth.Auth.auth().signIn(with: credential) { [weak self] authResult, error in
-            
-            guard let strongSelf = self else{ return }
-            
-            guard authResult != nil, error == nil else{
-                if let error = error {
-                    print("Debug: Error Loging with Facebook - \(error.localizedDescription)")
-                }
+        facebookRequest.start { connection, result, error in
+            guard let result = result as? [String: Any], error == nil else {
+                print("Debug: Failed to make facebook graph request")
                 return
             }
             
-            print("Debug: successfully logged user in")
-            strongSelf.navigationController?.dismiss(animated: true, completion: nil)
+            //print("Debug: graph request result: \(result)")
+            
+            guard let username = result["name"] as? String,
+                  let email = result["email"] as? String else{
+                      print("Debug: failed to get email and name from facebook")
+                      return
+                  }
+            
+            // get the first name and the last name
+            let nameComponents = username.components(separatedBy: " ")
+            guard nameComponents.count == 2 else {
+                print("Debug: something wrong with the fb user name")
+                return
+            }
+            let firstName = nameComponents[0]
+            let lastName = nameComponents[1]
+            
+            DatabaseManager.shared.userExists(with: email) { exist in
+                if(!exist){
+                    DatabaseManager.shared.insertUser(with: ChatAppUser(firstName: firstName, lastName: lastName, emailAddress: email))
+                }
+            }
+            
+            // Credential: 3rd party token
+            let credential = FacebookAuthProvider.credential(withAccessToken: token)
+            
+            FirebaseAuth.Auth.auth().signIn(with: credential) { [weak self] authResult, error in
+                
+                guard let strongSelf = self else{ return }
+                
+                guard authResult != nil, error == nil else{
+                    if let error = error {
+                        print("Debug: Error Loging with Facebook - \(error.localizedDescription)")
+                    }
+                    return
+                }
+                
+                print("Debug: successfully logged user in")
+                strongSelf.navigationController?.dismiss(animated: true, completion: nil)
+                
+            }
             
         }
+        
+        
     }
     
     

@@ -15,6 +15,8 @@
 		B97F411E2769F7190063631F /* FacebookCore in Frameworks */ = {isa = PBXBuildFile; productRef = B97F411D2769F7190063631F /* FacebookCore */; };
 		B97F41202769F7190063631F /* FacebookLogin in Frameworks */ = {isa = PBXBuildFile; productRef = B97F411F2769F7190063631F /* FacebookLogin */; };
 		B981753927688E6A001C0FDA /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B981753827688E6A001C0FDA /* ProfileViewController.swift */; };
+		B9A0D416276F0EE1004170BE /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = B9A0D415276F0EE1004170BE /* GoogleSignIn */; };
+		B9A0D418276F18F6004170BE /* credentials.plist in Resources */ = {isa = PBXBuildFile; fileRef = B9A0D417276F18F6004170BE /* credentials.plist */; };
 		B9EEBCC72765DBF7009E0192 /* DabaBaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9EEBCC62765DBF7009E0192 /* DabaBaseManager.swift */; };
 		B9EEBCC92766065A009E0192 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B9EEBCC82766065A009E0192 /* GoogleService-Info.plist */; };
 		F5955CF72732603500C1A5C5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5955CF62732603500C1A5C5 /* AppDelegate.swift */; };
@@ -30,6 +32,7 @@
 		B91FB32E275FBFE50007DC08 /* RegisterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
 		B944BFA12760F52D006CEDE3 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		B981753827688E6A001C0FDA /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
+		B9A0D417276F18F6004170BE /* credentials.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = credentials.plist; sourceTree = SOURCE_ROOT; };
 		B9EEBCC62765DBF7009E0192 /* DabaBaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DabaBaseManager.swift; sourceTree = "<group>"; };
 		B9EEBCC82766065A009E0192 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
 		F5955CF32732603500C1A5C5 /* ChatApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChatApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -47,6 +50,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B9A0D416276F0EE1004170BE /* GoogleSignIn in Frameworks */,
 				B97F41202769F7190063631F /* FacebookLogin in Frameworks */,
 				B97BBB9B2764A0450071D0A9 /* FirebaseDatabase in Frameworks */,
 				B97F411E2769F7190063631F /* FacebookCore in Frameworks */,
@@ -92,6 +96,7 @@
 				F5955D0B27329CBF00C1A5C5 /* ViewModels */,
 				F5955D0A27329CA600C1A5C5 /* Resources */,
 				F5955CFF2732603700C1A5C5 /* Assets.xcassets */,
+				B9A0D417276F18F6004170BE /* credentials.plist */,
 				F5955D042732603700C1A5C5 /* Info.plist */,
 			);
 			path = ChatApp;
@@ -170,6 +175,7 @@
 				B97BBB9A2764A0450071D0A9 /* FirebaseDatabase */,
 				B97F411D2769F7190063631F /* FacebookCore */,
 				B97F411F2769F7190063631F /* FacebookLogin */,
+				B9A0D415276F0EE1004170BE /* GoogleSignIn */,
 			);
 			productName = ChatApp;
 			productReference = F5955CF32732603500C1A5C5 /* ChatApp.app */;
@@ -202,6 +208,7 @@
 			packageReferences = (
 				B97BBB972764A0450071D0A9 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				B97F411C2769F7190063631F /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */,
+				B9A0D414276F0EE1004170BE /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 			);
 			productRefGroup = F5955CF42732603500C1A5C5 /* Products */;
 			projectDirPath = "";
@@ -219,6 +226,7 @@
 			files = (
 				F5955D032732603700C1A5C5 /* LaunchScreen.storyboard in Resources */,
 				B9EEBCC92766065A009E0192 /* GoogleService-Info.plist in Resources */,
+				B9A0D418276F18F6004170BE /* credentials.plist in Resources */,
 				F5955D002732603700C1A5C5 /* Assets.xcassets in Resources */,
 				F5955CFE2732603500C1A5C5 /* Main.storyboard in Resources */,
 			);
@@ -390,6 +398,8 @@
 				DEVELOPMENT_TEAM = QD49F8UH37;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ChatApp/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Please allow access to take a profile picture";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Select photo from your library";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -418,6 +428,8 @@
 				DEVELOPMENT_TEAM = QD49F8UH37;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ChatApp/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Please allow access to take a profile picture";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Select photo from your library";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -476,6 +488,14 @@
 				minimumVersion = 9.0.0;
 			};
 		};
+		B9A0D414276F0EE1004170BE /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -498,6 +518,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B97F411C2769F7190063631F /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */;
 			productName = FacebookLogin;
+		};
+		B9A0D415276F0EE1004170BE /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B9A0D414276F0EE1004170BE /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

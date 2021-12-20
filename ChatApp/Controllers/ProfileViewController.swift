@@ -7,6 +7,8 @@
 
 import UIKit
 import FirebaseAuth
+import FBSDKLoginKit
+import GoogleSignIn
 
 
 class ProfileViewController: UIViewController, UITableViewDataSource{
@@ -15,7 +17,7 @@ class ProfileViewController: UIViewController, UITableViewDataSource{
     
     @IBOutlet var tableview: UITableView!
     
-    override func viewDidLoad() {
+    override func viewDidLoad(){
         super.viewDidLoad()
         view.backgroundColor = .link
         tableview.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
@@ -36,7 +38,6 @@ extension ProfileViewController: UITableViewDelegate{
         content.text = data[indexPath.row]
         content.textProperties.alignment = .center
         content.textProperties.color = .red
-        
         cell.contentConfiguration = content
         
         return cell
@@ -54,6 +55,10 @@ extension ProfileViewController: UITableViewDelegate{
             
             guard let strongSelf = self else{ return }
             
+            // Log out facebook
+            FBSDKLoginKit.LoginManager().logOut()
+            GIDSignIn.sharedInstance.signOut()
+            
             do{
                 try FirebaseAuth.Auth.auth().signOut()
                 print("Debug: the current user has signed out")
@@ -67,14 +72,11 @@ extension ProfileViewController: UITableViewDelegate{
             catch{
                print("Debug: an error occuring while signing out")
             }
-            
         }))
         
         actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         
         present(actionSheet, animated: true, completion: nil)
-        
-            
         
     }
     
