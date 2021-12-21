@@ -9,12 +9,15 @@ import UIKit
 import FirebaseAuth
 import FBSDKLoginKit
 import GoogleSignIn
+import JGProgressHUD
 
 // Command + shift + O
 
 // Google Sign in : https://developers.google.com/identity/sign-in/ios/sign-in
 
 class LoginViewController: UIViewController {
+    
+    private let spinner = JGProgressHUD(style: .dark)
     
     // Google login
     let signInConfig = GIDConfiguration.init(clientID: "554575304460-5jg3ukppipppashb0pm1l3mqanguhpep.apps.googleusercontent.com")
@@ -231,9 +234,12 @@ class LoginViewController: UIViewController {
     
     // Google signin button
     @objc func googleSignIn() {
+        
+    self.spinner.show(in: self.view)
+        
       GIDSignIn.sharedInstance.signIn(with: signInConfig, presenting: self) { user, error in
-        guard error == nil else { return }
 
+        guard error == nil else { return }
           guard let user = user, error == nil else{
               print("Debug: Failed to log user with Google sign in: \(error?.localizedDescription)")
               return
@@ -260,29 +266,23 @@ class LoginViewController: UIViewController {
                    }
              let googleCredential = GoogleAuthProvider.credential(withIDToken: idToken,
                                                                   accessToken: authentication.accessToken)
-             
+
               FirebaseAuth.Auth.auth().signIn(with: googleCredential) {[weak self] result, error in
                  guard let user = result?.user, error == nil else{
                      print("Debug: Failed to login user with Google sign in")
                      return
                  }
-                 
+                  
+                  DispatchQueue.main.async {
+                      self?.spinner.dismiss(animated: true)
+                  }
+                  
                   self?.navigationController?.dismiss(animated: true, completion: nil)
-                 
              }
-              
           }
-          
       }
     }
-    
-    
 }
-
-
-// Swift // // 将下列代码添加到文件的头文件中，例如：在 ViewController.swift 中导入 FBSDKLoginKit // 将下列代码添加到正文类 ViewController：UIViewController { override func viewDidLoad() { super.viewDidLoad() let loginButton = FBLoginButton() loginButton.center = view.center view.addSubview(loginButton) } }
-
-
 
 extension LoginViewController: UITextFieldDelegate{
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {

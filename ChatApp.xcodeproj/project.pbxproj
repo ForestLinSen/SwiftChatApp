@@ -9,14 +9,20 @@
 /* Begin PBXBuildFile section */
 		B91FB32D275FBFB50007DC08 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B91FB32C275FBFB50007DC08 /* LoginViewController.swift */; };
 		B91FB32F275FBFE50007DC08 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B91FB32E275FBFE50007DC08 /* RegisterViewController.swift */; };
+		B9290A9F2770DC4D002B7194 /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9290A9E2770DC4D002B7194 /* ChatViewController.swift */; };
 		B944BFA22760F52D006CEDE3 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B944BFA12760F52D006CEDE3 /* Extensions.swift */; };
 		B97BBB992764A0450071D0A9 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = B97BBB982764A0450071D0A9 /* FirebaseAuth */; };
 		B97BBB9B2764A0450071D0A9 /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = B97BBB9A2764A0450071D0A9 /* FirebaseDatabase */; };
 		B97F411E2769F7190063631F /* FacebookCore in Frameworks */ = {isa = PBXBuildFile; productRef = B97F411D2769F7190063631F /* FacebookCore */; };
 		B97F41202769F7190063631F /* FacebookLogin in Frameworks */ = {isa = PBXBuildFile; productRef = B97F411F2769F7190063631F /* FacebookLogin */; };
 		B981753927688E6A001C0FDA /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B981753827688E6A001C0FDA /* ProfileViewController.swift */; };
+		B9963F4C27708784009BE0C4 /* JGProgressHUD in Frameworks */ = {isa = PBXBuildFile; productRef = B9963F4B27708784009BE0C4 /* JGProgressHUD */; };
+		B9963F4F27708839009BE0C4 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = B9963F4E27708839009BE0C4 /* Realm */; };
+		B9963F5127708839009BE0C4 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B9963F5027708839009BE0C4 /* RealmSwift */; };
+		B9963F542770894B009BE0C4 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = B9963F532770894B009BE0C4 /* SDWebImageSwiftUI */; };
 		B9A0D416276F0EE1004170BE /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = B9A0D415276F0EE1004170BE /* GoogleSignIn */; };
 		B9A0D418276F18F6004170BE /* credentials.plist in Resources */ = {isa = PBXBuildFile; fileRef = B9A0D417276F18F6004170BE /* credentials.plist */; };
+		B9B85D0D277205F300B113D0 /* MessageKit in Frameworks */ = {isa = PBXBuildFile; productRef = B9B85D0C277205F300B113D0 /* MessageKit */; };
 		B9EEBCC72765DBF7009E0192 /* DabaBaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9EEBCC62765DBF7009E0192 /* DabaBaseManager.swift */; };
 		B9EEBCC92766065A009E0192 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B9EEBCC82766065A009E0192 /* GoogleService-Info.plist */; };
 		F5955CF72732603500C1A5C5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5955CF62732603500C1A5C5 /* AppDelegate.swift */; };
@@ -30,6 +36,7 @@
 /* Begin PBXFileReference section */
 		B91FB32C275FBFB50007DC08 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		B91FB32E275FBFE50007DC08 /* RegisterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
+		B9290A9E2770DC4D002B7194 /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
 		B944BFA12760F52D006CEDE3 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		B981753827688E6A001C0FDA /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		B9A0D417276F18F6004170BE /* credentials.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = credentials.plist; sourceTree = SOURCE_ROOT; };
@@ -50,11 +57,16 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B9963F5127708839009BE0C4 /* RealmSwift in Frameworks */,
+				B9963F4F27708839009BE0C4 /* Realm in Frameworks */,
 				B9A0D416276F0EE1004170BE /* GoogleSignIn in Frameworks */,
+				B9963F542770894B009BE0C4 /* SDWebImageSwiftUI in Frameworks */,
 				B97F41202769F7190063631F /* FacebookLogin in Frameworks */,
 				B97BBB9B2764A0450071D0A9 /* FirebaseDatabase in Frameworks */,
 				B97F411E2769F7190063631F /* FacebookCore in Frameworks */,
+				B9963F4C27708784009BE0C4 /* JGProgressHUD in Frameworks */,
 				B97BBB992764A0450071D0A9 /* FirebaseAuth in Frameworks */,
+				B9B85D0D277205F300B113D0 /* MessageKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -68,6 +80,15 @@
 				B91FB32E275FBFE50007DC08 /* RegisterViewController.swift */,
 			);
 			path = Login;
+			sourceTree = "<group>";
+		};
+		B9290A9D2770DC34002B7194 /* Chat */ = {
+			isa = PBXGroup;
+			children = (
+				F5955CFA2732603500C1A5C5 /* ConversationViewController.swift */,
+				B9290A9E2770DC4D002B7194 /* ChatViewController.swift */,
+			);
+			path = Chat;
 			sourceTree = "<group>";
 		};
 		F5955CEA2732603500C1A5C5 = {
@@ -137,7 +158,7 @@
 		F5955D0E27329CD300C1A5C5 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				F5955CFA2732603500C1A5C5 /* ConversationViewController.swift */,
+				B9290A9D2770DC34002B7194 /* Chat */,
 				B91FB330275FC0070007DC08 /* Login */,
 				B9EEBCC62765DBF7009E0192 /* DabaBaseManager.swift */,
 				B981753827688E6A001C0FDA /* ProfileViewController.swift */,
@@ -176,6 +197,11 @@
 				B97F411D2769F7190063631F /* FacebookCore */,
 				B97F411F2769F7190063631F /* FacebookLogin */,
 				B9A0D415276F0EE1004170BE /* GoogleSignIn */,
+				B9963F4B27708784009BE0C4 /* JGProgressHUD */,
+				B9963F4E27708839009BE0C4 /* Realm */,
+				B9963F5027708839009BE0C4 /* RealmSwift */,
+				B9963F532770894B009BE0C4 /* SDWebImageSwiftUI */,
+				B9B85D0C277205F300B113D0 /* MessageKit */,
 			);
 			productName = ChatApp;
 			productReference = F5955CF32732603500C1A5C5 /* ChatApp.app */;
@@ -209,6 +235,10 @@
 				B97BBB972764A0450071D0A9 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				B97F411C2769F7190063631F /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */,
 				B9A0D414276F0EE1004170BE /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				B9963F4A27708784009BE0C4 /* XCRemoteSwiftPackageReference "JGProgressHUD" */,
+				B9963F4D27708838009BE0C4 /* XCRemoteSwiftPackageReference "realm-swift" */,
+				B9963F522770894A009BE0C4 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
+				B9B85D0B277205F300B113D0 /* XCRemoteSwiftPackageReference "MessageKit" */,
 			);
 			productRefGroup = F5955CF42732603500C1A5C5 /* Products */;
 			projectDirPath = "";
@@ -246,6 +276,7 @@
 				F5955CFB2732603500C1A5C5 /* ConversationViewController.swift in Sources */,
 				F5955CF72732603500C1A5C5 /* AppDelegate.swift in Sources */,
 				B981753927688E6A001C0FDA /* ProfileViewController.swift in Sources */,
+				B9290A9F2770DC4D002B7194 /* ChatViewController.swift in Sources */,
 				F5955CF92732603500C1A5C5 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -488,12 +519,44 @@
 				minimumVersion = 9.0.0;
 			};
 		};
+		B9963F4A27708784009BE0C4 /* XCRemoteSwiftPackageReference "JGProgressHUD" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/JonasGessner/JGProgressHUD.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
+		B9963F4D27708838009BE0C4 /* XCRemoteSwiftPackageReference "realm-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/realm/realm-swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.0;
+			};
+		};
+		B9963F522770894A009BE0C4 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SDWebImage/SDWebImageSwiftUI.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
 		B9A0D414276F0EE1004170BE /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 6.0.0;
+			};
+		};
+		B9B85D0B277205F300B113D0 /* XCRemoteSwiftPackageReference "MessageKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/MessageKit/MessageKit";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.0.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -519,10 +582,35 @@
 			package = B97F411C2769F7190063631F /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */;
 			productName = FacebookLogin;
 		};
+		B9963F4B27708784009BE0C4 /* JGProgressHUD */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B9963F4A27708784009BE0C4 /* XCRemoteSwiftPackageReference "JGProgressHUD" */;
+			productName = JGProgressHUD;
+		};
+		B9963F4E27708839009BE0C4 /* Realm */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B9963F4D27708838009BE0C4 /* XCRemoteSwiftPackageReference "realm-swift" */;
+			productName = Realm;
+		};
+		B9963F5027708839009BE0C4 /* RealmSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B9963F4D27708838009BE0C4 /* XCRemoteSwiftPackageReference "realm-swift" */;
+			productName = RealmSwift;
+		};
+		B9963F532770894B009BE0C4 /* SDWebImageSwiftUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B9963F522770894A009BE0C4 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;
+			productName = SDWebImageSwiftUI;
+		};
 		B9A0D415276F0EE1004170BE /* GoogleSignIn */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B9A0D414276F0EE1004170BE /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
 			productName = GoogleSignIn;
+		};
+		B9B85D0C277205F300B113D0 /* MessageKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B9B85D0B277205F300B113D0 /* XCRemoteSwiftPackageReference "MessageKit" */;
+			productName = MessageKit;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
