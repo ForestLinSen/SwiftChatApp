@@ -39,6 +39,15 @@ class ConversationViewController: UIViewController {
         self.navigationItem.backButtonTitle = "All Chats"
         
         
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .compose, target: self, action: #selector(didTapNewChatItem))
+        
+        
+    }
+    
+    @objc func didTapNewChatItem(){
+        let vc = NewConversationViewController()
+        let nav = UINavigationController(rootViewController: vc)
+        present(nav, animated: true, completion: nil)
     }
     
     override func viewDidAppear(_ animated: Bool) {
