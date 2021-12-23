@@ -8,8 +8,11 @@
 import UIKit
 import PhotosUI
 import FirebaseAuth
+import JGProgressHUD
 
 class RegisterViewController: UIViewController{
+    
+    private let spinner = JGProgressHUD(style: .dark)
     
     let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -157,6 +160,9 @@ class RegisterViewController: UIViewController{
     
     @objc private func registerButtonTapped(){
         
+        spinner.show(in: view)
+        
+        
         emailField.resignFirstResponder()
         passwordField.resignFirstResponder()
         
@@ -187,7 +193,35 @@ class RegisterViewController: UIViewController{
                     return
                 }
                 
-                DatabaseManager.shared.insertUser(with: newUser)
+                DatabaseManager.shared.insertUser(with: newUser){success in
+                    if(success){
+                        // upload image
+                        guard let image = strongSelf.imageView.image,
+                                let data = image.pngData() else{
+                            print("Debug: failed to upload user image to database")
+                            return
+                        }
+                        
+                        StorageManager.shared.uploadProfilePicture(with: data, fileName: newUser.profilePictureName) { result in
+                            switch result{
+                            case .success(let imageUrl):
+                                print("Debug : download url\(imageUrl)")
+                            case .failure(let error):
+                                print("Debug: failed to upload profile picture")
+                            }
+                        }
+                    }
+                    
+                    DispatchQueue.main.async {
+                        strongSelf.spinner.dismiss(animated: true)
+                    }
+                    
+                    let vc = ConversationViewController()
+                    let nv = UINavigationController(rootViewController: vc)
+                    nv.modalPresentationStyle = .fullScreen
+                    strongSelf.present(nv, animated: true, completion: nil)
+                    
+                }
             }
         }
         

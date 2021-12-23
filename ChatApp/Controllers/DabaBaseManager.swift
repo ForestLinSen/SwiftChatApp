@@ -7,6 +7,7 @@
 
 import Foundation
 import FirebaseDatabase
+import CoreMedia
 
 final class DatabaseManager{
     static let shared = DatabaseManager()
@@ -31,12 +32,18 @@ extension DatabaseManager{
     }
     
     /// Insert new user to database
-    public func insertUser(with user: ChatAppUser){
-        print("Debug: safe email address \(user.safeEmail)")
-        self.database.child(user.safeEmail).setValue([
-            "firstName": user.firstName,
-            "lastName": user.lastName
-        ])
+    public func insertUser(with user: ChatAppUser, completion: @escaping ((Bool) -> Void)){
+
+        self.database.child(user.safeEmail).setValue(["firstName": user.firstName,
+                                                      "lastName": user.lastName]) { error, reference in
+            guard error == nil else{
+                print("Debug: failed to insert the user")
+                completion(false)
+                return
+            }
+            
+            completion(true)
+        }
 
     }
 }
@@ -50,6 +57,10 @@ struct ChatAppUser{
         var safeEmail = emailAddress.replacingOccurrences(of: ".", with: "-")
         safeEmail = safeEmail.replacingOccurrences(of: "@", with: "-")
         return safeEmail
+    }
+    
+    var profilePictureName: String{
+        return "\(safeEmail)_profile_picture.png"
     }
     
     //let profilePictureUrl: String

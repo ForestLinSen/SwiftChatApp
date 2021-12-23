@@ -256,7 +256,11 @@ class LoginViewController: UIViewController {
           
           DatabaseManager.shared.userExists(with: chatUser.safeEmail) { exist in
               if(!exist){
-                  DatabaseManager.shared.insertUser(with: chatUser)
+                  DatabaseManager.shared.insertUser(with: chatUser){success in
+                      if(success){
+                          // upload image
+                      }
+                  }
               }
               
               let authentication = user.authentication
@@ -341,7 +345,11 @@ extension LoginViewController: LoginButtonDelegate{
             
             DatabaseManager.shared.userExists(with: email) { exist in
                 if(!exist){
-                    DatabaseManager.shared.insertUser(with: ChatAppUser(firstName: firstName, lastName: lastName, emailAddress: email))
+                    DatabaseManager.shared.insertUser(with: ChatAppUser(firstName: firstName, lastName: lastName, emailAddress: email)){success in
+                        if(success){
+                            // Upload image
+                        }
+                    }
                 }
             }
             
