@@ -36,6 +36,18 @@ final class StorageManager{
         }
     }
     
+    func getProfileImage(path: String, completion: @escaping ((String) -> Void)){
+        storage.child(path).downloadURL { nsUrl, error in
+            guard error == nil, let profileUrl = nsUrl?.absoluteString else {
+                print("Debug: Failed to download user image")
+                return
+            }
+            
+            completion(profileUrl)
+
+        }
+    }
+    
     public enum StorageErrors: Error{
         case failedToUpload
         case failedToGetDownloadURL

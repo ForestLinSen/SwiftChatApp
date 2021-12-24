@@ -13,6 +13,12 @@ final class DatabaseManager{
     static let shared = DatabaseManager()
     private let database = Database.database().reference()
     
+    static func safeEmail(email: String) -> String{
+        var safeEmail = email.replacingOccurrences(of: ".", with: "-")
+        safeEmail = safeEmail.replacingOccurrences(of: "@", with: "-")
+        return safeEmail
+    }
+    
 }
 
 
@@ -65,17 +71,3 @@ struct ChatAppUser{
     
     //let profilePictureUrl: String
 }
-    
-//    public func test(){
-//        print("Debug: TEST DATABASE")
-//        database.child("foo").setValue(["something": "yess"])
-//        database.child("bar").setValue(["handler": "yess"]) { error, reference in
-//            guard error == nil else{
-//                print("Debug: Error writing in database\(error?.localizedDescription)")
-//                return
-//            }
-//
-//            print("Debug: success \(reference)")
-//        }
-//    }
-

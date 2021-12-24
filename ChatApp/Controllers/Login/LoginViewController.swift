@@ -305,6 +305,7 @@ class LoginViewController: UIViewController {
                       self?.spinner.dismiss(animated: true)
                   }
                   
+                  UserDefaults.standard.set(email, forKey: "user_email")
                   self?.navigationController?.dismiss(animated: true, completion: nil)
              }
           }
