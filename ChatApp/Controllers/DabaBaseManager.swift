@@ -22,6 +22,24 @@ final class DatabaseManager{
 }
 
 // MARK: - Search Users
+extension DatabaseManager{
+    public func fetchUsers(completion: @escaping (Result<[[String: String]], Error>) -> Void){
+        self.database.child("users").observeSingleEvent(of: .value) { snapShot in
+            guard let result = snapShot.value as? [[String: String]] else{
+                print("Debug: cannot fetch users")
+                completion(.failure(FetchError.failedToFetchUsers))
+                return
+            }
+            
+            //print("Debug: successful getting users:  \(result)")
+            completion(.success(result))
+        }
+    }
+}
+
+public enum FetchError: Error{
+    case failedToFetchUsers
+}
 
 
 // MARK: - Account management

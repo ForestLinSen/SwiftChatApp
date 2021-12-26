@@ -9,6 +9,10 @@ import UIKit
 
 class NewConversationViewController: UIViewController {
     
+    private var users = [[String: String]]()
+    private var searchResults = [[String: String]]()
+    private var isFetched = false
+    
     private let searchBar: UISearchBar = {
         let searchBar = UISearchBar()
         searchBar.placeholder = "Search for users..."
@@ -21,16 +25,12 @@ class NewConversationViewController: UIViewController {
         return tableView
     }()
     
-    private var users = [String]()
-
     override func viewDidLoad() {
         super.viewDidLoad()
         
         searchBar.delegate = self
         tableView.dataSource = self
         tableView.delegate = self
-        
-        users.append("James Bond")
         
         navigationController?.navigationBar.topItem?.titleView = searchBar
         
@@ -57,19 +57,50 @@ class NewConversationViewController: UIViewController {
 
 extension NewConversationViewController: UISearchBarDelegate{
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        //DatabaseManager.shared.
+        
+        guard !(searchBar.text?.isEmpty ?? true) else { return }
+        
+        if(!isFetched){
+            print("Debug: begin to fetch users")
+            DatabaseManager.shared.fetchUsers {[weak self] result in
+                switch result{
+                case .failure(let error):
+                    print("Debug: cannot fetch users from the database")
+                case .success(let usersCollection):
+                    self?.users = usersCollection
+                    self?.isFetched = true
+                    
+                    self?.filterUser(query: searchBar.text ?? "")
+                }
+            }
+        }else{
+            filterUser(query: searchBar.text ?? "")
+        }
+    }
+    
+    func filterUser(query: String){
+        self.searchResults = self.users.filter{
+            guard let name = $0["name"]?.lowercased() else { return false}
+            return name.contains(query)
+        }
+        
+        self.updateUI()
+    }
+    
+    func updateUI(){
+        self.tableView.reloadData()
     }
 }
 
 extension NewConversationViewController: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return users.count
+        return searchResults.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         var config = cell.defaultContentConfiguration()
-        config.text = users[indexPath.row]
+        config.text = searchResults[indexPath.row]["name"]
         
         cell.contentConfiguration = config
         return cell
