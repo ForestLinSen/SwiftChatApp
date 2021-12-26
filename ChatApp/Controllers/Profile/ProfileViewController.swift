@@ -49,20 +49,25 @@ class ProfileViewController: UIViewController, UITableViewDataSource{
     
     func createTableHeader() -> UIView?{
         
+        let imageSize = 80
+        
         let headerView = UIView(frame: CGRect(x: 0,
                                               y: 0,
-                                        width: view.frame.size.width,
-                                        height: 300))
+                                              width: Int(view.frame.size.width),
+                                        height: imageSize*2))
         
-        let imageView = UIImageView(frame: CGRect(x: (headerView.frame.size.width - 150 )/2,
-                                                  y: 75,
-                                                  width: 150,
-                                                  height: 150))
+        let imageView = UIImageView(frame: CGRect(x: (Int(headerView.frame.size.width) - imageSize )/2,
+                                                  y: imageSize/2,
+                                                  width: imageSize,
+                                                  height: imageSize))
         
 //        imageView.image = UIImage(systemName: "person.crop.rectangle.fill")
-        imageView.contentMode = .scaleAspectFill
+        
         imageView.layer.borderWidth = 3
         imageView.layer.borderColor = UIColor.white.cgColor
+        imageView.layer.cornerRadius = imageView.width / 2
+        imageView.contentMode = .scaleAspectFit
+        imageView.clipsToBounds = true
         
         headerView.backgroundColor = .systemBlue
 //        tableview.addSubview(headerView)
@@ -78,14 +83,34 @@ class ProfileViewController: UIViewController, UITableViewDataSource{
         
         print("Debug: profile image file name \(fileName)")
         
-        StorageManager.shared.getProfileImage(path: fileName) { url in
+        StorageManager.shared.getProfileImage(path: fileName) {[weak self] result in
             
-            guard let imageUrl = URL(string: url) else { return }
+            switch result{
+            case .failure(let error):
+                print("Debug: cannot get profile image url: \(error)")
+                
+            case .success(let url):
+                //imageView.sd_setImage(with: url, completed: nil)
+                self?.downloadImage(imageView: imageView, url: url)
+            }
             
-            imageView.sd_setImage(with: imageUrl, completed: nil)
         }
         
         return headerView
+    }
+    
+    func downloadImage(imageView: UIImageView, url: URL){
+        URLSession.shared.dataTask(with: url) { data, _, error in
+            guard error == nil, let data = data else{
+                print("Debug: failed to download image url \(error)")
+                return
+            }
+            
+            DispatchQueue.main.async {
+                imageView.image = UIImage(data: data)
+            }
+            
+        }.resume()
     }
     
 }

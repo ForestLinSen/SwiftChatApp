@@ -200,7 +200,7 @@ class LoginViewController: UIViewController {
         print("Debug: email and password are ok")
         
         //Firbase login
-        FirebaseAuth.Auth.auth().signIn(withEmail: email, password: password) { authResult, error in
+        FirebaseAuth.Auth.auth().signIn(withEmail: email, password: password) {[weak self] authResult, error in
             guard error == nil else{
                 print("Debug: log in error")
                 return
@@ -208,10 +208,12 @@ class LoginViewController: UIViewController {
             
             print("Debug: login user: \(authResult?.user)")
             
-            let vc = ConversationViewController()
-            let nv = UINavigationController(rootViewController: vc)
-            nv.modalPresentationStyle = .fullScreen
-            self.present(nv, animated: true, completion: nil)
+//            let vc = ConversationViewController()
+//            let nv = UINavigationController(rootViewController: vc)
+//            nv.modalPresentationStyle = .fullScreen
+//            self.present(nv, animated: true, completion: nil)
+            
+            self?.navigationController?.dismiss(animated: true, completion: nil)
             
             
         }
@@ -305,7 +307,10 @@ class LoginViewController: UIViewController {
                       self?.spinner.dismiss(animated: true)
                   }
                   
-                  UserDefaults.standard.set(email, forKey: "user_email")
+                  if(UserDefaults.standard.string(forKey: "user_email") == nil){
+                      UserDefaults.standard.set(email, forKey: "user_email")
+                  }
+                  
                   self?.navigationController?.dismiss(animated: true, completion: nil)
              }
           }

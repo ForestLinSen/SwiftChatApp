@@ -36,14 +36,15 @@ final class StorageManager{
         }
     }
     
-    func getProfileImage(path: String, completion: @escaping ((String) -> Void)){
-        storage.child(path).downloadURL { nsUrl, error in
-            guard error == nil, let profileUrl = nsUrl?.absoluteString else {
+    func getProfileImage(path: String, completion: @escaping ((Result<URL, Error>) -> Void)){
+        storage.child(path).downloadURL { url, error in
+            guard error == nil, let profileUrl = url else {
                 print("Debug: Failed to download user image")
+                completion(.failure(StorageErrors.failedToGetDownloadURL))
                 return
             }
             
-            completion(profileUrl)
+            completion(.success(profileUrl))
 
         }
     }

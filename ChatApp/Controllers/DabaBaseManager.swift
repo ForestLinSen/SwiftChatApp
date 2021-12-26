@@ -21,6 +21,8 @@ final class DatabaseManager{
     
 }
 
+// MARK: - Search Users
+
 
 // MARK: - Account management
 extension DatabaseManager{
@@ -47,8 +49,44 @@ extension DatabaseManager{
                 completion(false)
                 return
             }
+        }
+        
+        self.database.child("users").observeSingleEvent(of: .value) { snapShot in
             
-            completion(true)
+            var usersCollection: [[String: String]]
+            
+            let newElement = [
+                "name": user.firstName + " " + user.lastName,
+                "email": user.safeEmail
+            ]
+            
+            if var fetchCollection = snapShot.value as? [[String: String]] {
+                // append to the existing array
+                
+                usersCollection = fetchCollection
+                usersCollection.append(newElement)
+            }else{
+                
+                // create a new array
+                usersCollection = [
+                    [
+                    "name": user.firstName + " " + user.lastName,
+                    "email": user.safeEmail
+                    ]
+                ]
+            }
+            
+            self.database.child("users").setValue(usersCollection) { error, reference in
+                guard error == nil else{
+                    print("Debug: cannot set the user collection \(error)")
+                    return
+                }
+                
+                completion(true)
+            }
+            
+            
+            
         }
 
     }
