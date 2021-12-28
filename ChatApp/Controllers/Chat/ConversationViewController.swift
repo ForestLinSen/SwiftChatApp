@@ -7,8 +7,14 @@
 
 import UIKit
 import FirebaseAuth
+import JGProgressHUD
 
 class ConversationViewController: UIViewController {
+    
+    //private var users = [[String: String]]()
+    private var isFetched = false
+    private let spinner = JGProgressHUD(style: .dark)
+    private let conversationViewController = NewConversationViewController()
     
     let tableView: UITableView = {
         let tableView = UITableView()
@@ -38,16 +44,45 @@ class ConversationViewController: UIViewController {
         self.navigationController?.navigationBar.tintColor = .white
         self.navigationItem.backButtonTitle = "All Chats"
         
+        if(!isFetched){
+            print("Debug: begin to fetch users")
+            DatabaseManager.shared.fetchUsers {[weak self] result in
+                switch result{
+                case .failure(_):
+                    print("Debug: cannot fetch users from the database")
+                case .success(let usersCollection):
+                    //self?.users = usersCollection
+                    self?.isFetched = true
+                    self?.spinner.dismiss(animated: true)
+                    self?.conversationViewController.users = usersCollection
+                }
+            }
+        }
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .compose, target: self, action: #selector(didTapNewChatItem))
-        
-        
+
     }
     
     @objc func didTapNewChatItem(){
-        let vc = NewConversationViewController()
-        let nav = UINavigationController(rootViewController: vc)
+
+        self.conversationViewController.completion = {[weak self] result in
+            self?.createNewConversation(result: result)
+        }
+        
+        let nav = UINavigationController(rootViewController: conversationViewController)
         present(nav, animated: true, completion: nil)
+        
+        if(!self.isFetched){
+            spinner.show(in: nav.view)
+        }
+
+    }
+    
+    func createNewConversation(result: [String: String]){
+        let vc = ChatViewController()
+        vc.title = result["name"] ?? "Unknown"
+        vc.navigationItem.largeTitleDisplayMode = .never
+        self.navigationController?.pushViewController(vc, animated: true)
     }
     
     override func viewDidAppear(_ animated: Bool) {

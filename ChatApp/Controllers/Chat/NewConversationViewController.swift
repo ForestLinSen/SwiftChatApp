@@ -8,10 +8,12 @@
 import UIKit
 
 class NewConversationViewController: UIViewController {
-    
-    private var users = [[String: String]]()
+ 
+    var users: [[String: String]] = []
     private var searchResults = [[String: String]]()
     private var isFetched = false
+    
+    var completion: (([String: String]) -> Void)?
     
     private let searchBar: UISearchBar = {
         let searchBar = UISearchBar()
@@ -60,22 +62,24 @@ extension NewConversationViewController: UISearchBarDelegate{
         
         guard !(searchBar.text?.isEmpty ?? true) else { return }
         
-        if(!isFetched){
-            print("Debug: begin to fetch users")
-            DatabaseManager.shared.fetchUsers {[weak self] result in
-                switch result{
-                case .failure(let error):
-                    print("Debug: cannot fetch users from the database")
-                case .success(let usersCollection):
-                    self?.users = usersCollection
-                    self?.isFetched = true
-                    
-                    self?.filterUser(query: searchBar.text ?? "")
-                }
-            }
-        }else{
-            filterUser(query: searchBar.text ?? "")
-        }
+        self.filterUser(query: searchBar.text ?? "")
+        
+//        if(!isFetched){
+//            print("Debug: begin to fetch users")
+//            DatabaseManager.shared.fetchUsers {[weak self] result in
+//                switch result{
+//                case .failure(let error):
+//                    print("Debug: cannot fetch users from the database")
+//                case .success(let usersCollection):
+//                    self?.users = usersCollection
+//                    self?.isFetched = true
+//
+//
+//                }
+//            }
+//        }else{
+//            filterUser(query: searchBar.text ?? "")
+//        }
     }
     
     func filterUser(query: String){
@@ -108,6 +112,21 @@ extension NewConversationViewController: UITableViewDelegate, UITableViewDataSou
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        
+        let targetUser = searchResults[indexPath.row]
+        
+        // Dismiss the search view controller
+        dismiss(animated: true, completion: { [weak self] in
+            self?.completion?(targetUser)
+        })
+        
+        
+        
+//        let vc = ChatViewController()
+//        vc.title = targetUser["name"]
+//        vc.navigationItem.largeTitleDisplayMode = .never
+//        self.navigationController?.pushViewController(vc, animated: true)
+        
     }
     
     
