@@ -79,8 +79,14 @@ class ConversationViewController: UIViewController {
     }
     
     func createNewConversation(result: [String: String]){
-        let vc = ChatViewController()
-        vc.title = result["name"] ?? "Unknown"
+        
+        guard let otherUserEmail = result["email"], let otherUserName = result["name"] else{
+            print("Debug: cannot get user email or user name")
+            return
+        }
+        
+        let vc = ChatViewController(otherUserId: otherUserEmail)
+        vc.title = otherUserName
         vc.navigationItem.largeTitleDisplayMode = .never
         self.navigationController?.pushViewController(vc, animated: true)
     }
@@ -129,7 +135,7 @@ extension ConversationViewController: UITableViewDelegate, UITableViewDataSource
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        let vc = ChatViewController()
+        let vc = ChatViewController(otherUserId: "Test James Bond")
         vc.title = "James Bond"
         vc.navigationItem.largeTitleDisplayMode = .never
         self.navigationController?.pushViewController(vc, animated: true)

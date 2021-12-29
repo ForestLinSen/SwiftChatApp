@@ -14,7 +14,37 @@ struct Message: MessageType{
     var sentDate: Date
     var dateString: String{
         let formatter = DateFormatter()
-        
+        formatter.dateStyle = .full
+        return formatter.string(from: sentDate)
     }
+    let otherUserId: String
+    
     var kind: MessageKind
+    
+    var message: String{
+        switch kind {
+        case .text(let string):
+            return string
+        case .attributedText(let nSAttributedString):
+            break
+        case .photo(let mediaItem):
+            break
+        case .video(let mediaItem):
+            break
+        case .location(let locationItem):
+            break
+        case .emoji(let string):
+            break
+        case .audio(let audioItem):
+            break
+        case .contact(let contactItem):
+            break
+        case .linkPreview(let linkItem):
+            break
+        case .custom(let optional):
+            break
+        }
+        
+        return ""
+    }
 }

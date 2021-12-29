@@ -25,9 +25,7 @@ extension DatabaseManager{
     // Path: safeEmail -> conversations (array)
     // Data structure: [conversationID: String, content: String, date: Date(), senderEmail: String]
         // id: conversation_email1_email2_date
-    public func uploadMessage(safeEmail: String){
-        
-        
+    public func uploadMessage(safeEmail: String, message: Message){
         
         database.child(safeEmail).child("conversation").observeSingleEvent(of: .value) {[weak self] snapShot in
             // if conversation doesn't exist, then create one
@@ -35,13 +33,13 @@ extension DatabaseManager{
             
             if !snapShot.exists(){
                 conversation = [[
-                    "id": "id123456",
+                    "id": message.messageId,
                     "latest_message" :
-                        ["conversationId": "1",
-                         "content": "Hi",
-                         "date": "Date()"
+                        [
+                        "content": message.message,
+                        "date": message.dateString
                          ],
-                    "other_user_email": "a@b.com"]]
+                    "other_user_email": message.otherUserId]]
             }else{
                 guard let data = snapShot.value else{
                     print("Debug: failed to get user message data \(snapShot.value)")
@@ -50,13 +48,13 @@ extension DatabaseManager{
                 
                 conversation = data as? [[String : Any]] ?? [[:]]
                 conversation.append([
-                    "id": "id123456",
+                    "id": message.messageId,
                     "latest_message" :
-                        ["conversationId": "1",
-                         "content": "Hi",
-                         "date": "Date()"
+                        [
+                        "content": message.message,
+                        "date": message.dateString
                          ],
-                    "other_user_email": "a@b.com"])
+                    "other_user_email": message.otherUserId])
             }
             
             self?.database.child(safeEmail).child("conversation").setValue(conversation) { error, _ in
