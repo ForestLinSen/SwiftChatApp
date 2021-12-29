@@ -15,21 +15,21 @@ struct Sender: SenderType{
     var photoURL: String
 }
 
-struct Message: MessageType{
-    var sender: SenderType
-    var messageId: String
-    var sentDate: Date
-    var kind: MessageKind
-}
+
 
 class ChatViewController: MessagesViewController {
     
     private var messages = [Message]()
+    
+
+    
+    // TODO: selfSender and the targetSender
     private let selfSender = Sender(senderId: "1", displayName: "Mu", photoURL: "")
+    //private let targetSender: Sender
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        view.backgroundColor = .systemPurple
         
         messages.append(Message(sender: selfSender,
                                 messageId: "2",
@@ -72,6 +72,18 @@ extension ChatViewController: MessagesDataSource, MessagesLayoutDelegate, Messag
 
 extension ChatViewController: InputBarAccessoryViewDelegate{
     func inputBar(_ inputBar: InputBarAccessoryView, didPressSendButtonWith text: String) {
-        print("Debug: user text: \(text)")
+        print("Debug: user input \(text)")
+        // Upload the text to the database
+        // Database design:
+        
+        guard let email = UserDefaults.standard.string(forKey: "user_email") else {
+            print("Debug: cannot get useDefaults user email")
+            return
+        }
+        
+        let safeEmail = DatabaseManager.safeEmail(email: email)
+        //print("Debug: safe email \(safeEmail)")
+        
+        DatabaseManager.shared.uploadMessage(safeEmail: safeEmail)
     }
 }

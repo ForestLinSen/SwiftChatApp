@@ -18,8 +18,59 @@ final class DatabaseManager{
         safeEmail = safeEmail.replacingOccurrences(of: "@", with: "-")
         return safeEmail
     }
-    
 }
+
+// MARK: - Upload Messages to the Database
+extension DatabaseManager{
+    // Path: safeEmail -> conversations (array)
+    // Data structure: [conversationID: String, content: String, date: Date(), senderEmail: String]
+        // id: conversation_email1_email2_date
+    public func uploadMessage(safeEmail: String){
+        
+        
+        
+        database.child(safeEmail).child("conversation").observeSingleEvent(of: .value) {[weak self] snapShot in
+            // if conversation doesn't exist, then create one
+            var conversation: [[String: Any]]
+            
+            if !snapShot.exists(){
+                conversation = [[
+                    "id": "id123456",
+                    "latest_message" :
+                        ["conversationId": "1",
+                         "content": "Hi",
+                         "date": "Date()"
+                         ],
+                    "other_user_email": "a@b.com"]]
+            }else{
+                guard let data = snapShot.value else{
+                    print("Debug: failed to get user message data \(snapShot.value)")
+                    return
+                }
+                
+                conversation = data as? [[String : Any]] ?? [[:]]
+                conversation.append([
+                    "id": "id123456",
+                    "latest_message" :
+                        ["conversationId": "1",
+                         "content": "Hi",
+                         "date": "Date()"
+                         ],
+                    "other_user_email": "a@b.com"])
+            }
+            
+            self?.database.child(safeEmail).child("conversation").setValue(conversation) { error, _ in
+                guard error == nil else {
+                    print("Debug: Failed to upload message \(error?.localizedDescription)")
+                    return
+                }
+                
+            }
+            
+        }
+    }
+}
+
 
 // MARK: - Search Users
 extension DatabaseManager{
@@ -59,7 +110,7 @@ extension DatabaseManager{
     
     /// Insert new user to database
     public func insertUser(with user: ChatAppUser, completion: @escaping ((Bool) -> Void)){
-
+        
         self.database.child(user.safeEmail).setValue(["firstName": user.firstName,
                                                       "lastName": user.lastName]) { error, reference in
             guard error == nil else{
@@ -88,8 +139,8 @@ extension DatabaseManager{
                 // create a new array
                 usersCollection = [
                     [
-                    "name": user.firstName + " " + user.lastName,
-                    "email": user.safeEmail
+                        "name": user.firstName + " " + user.lastName,
+                        "email": user.safeEmail
                     ]
                 ]
             }
@@ -103,27 +154,8 @@ extension DatabaseManager{
                 completion(true)
             }
             
-            
-            
         }
-
+        
     }
 }
 
-struct ChatAppUser{
-    let firstName: String
-    let lastName: String
-    let emailAddress: String
-    
-    var safeEmail: String{
-        var safeEmail = emailAddress.replacingOccurrences(of: ".", with: "-")
-        safeEmail = safeEmail.replacingOccurrences(of: "@", with: "-")
-        return safeEmail
-    }
-    
-    var profilePictureName: String{
-        return "\(safeEmail)_profile_picture.png"
-    }
-    
-    //let profilePictureUrl: String
-}
