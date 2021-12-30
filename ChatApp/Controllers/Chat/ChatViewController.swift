@@ -22,10 +22,20 @@ class ChatViewController: MessagesViewController {
     
     // TODO: selfSender and the targetSender
     private let selfSender = Sender(senderId: "1", displayName: "Mu", photoURL: "")
-    private let otherUserId: String
     
-    init(otherUserId: String){
-        self.otherUserId = otherUserId
+    private let safeEmail: String = {
+        // safe email
+        guard let email = UserDefaults.standard.string(forKey: "user_email") else {
+            print("Debug: cannot get useDefaults user email")
+            return ""
+        }
+        return DatabaseManager.safeEmail(email: email)
+    }()
+    
+    private let otherUserEmail: String
+    
+    init(otherUserEmail: String){
+        self.otherUserEmail = otherUserEmail
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -51,6 +61,37 @@ class ChatViewController: MessagesViewController {
         self.messagesCollectionView.messagesLayoutDelegate = self
         self.messagesCollectionView.messagesDisplayDelegate = self
         self.messageInputBar.delegate = self
+        
+        DatabaseManager.shared.fetchMessages(userEmail: self.safeEmail,
+                                             otherUserEmail: self.otherUserEmail) {[weak self] result in
+            switch result{
+            case .failure(_):
+                break
+            case .success(let messagesCollection):
+                for message in messagesCollection {
+                    if let id = message["id"] as? String,
+                       let latestMessage = message["latest_message"] as? [String: String],
+                       let sentDate = latestMessage["date"] ,
+                       let content = latestMessage["content"] ,
+                       let otherUserId = message["other_user_email"] as? String{
+                        
+                        let newMessage = Message(sender: self?.selfSender as SenderType,
+                                                 messageId: id,
+                                                 sentDate: Date(),
+                                                 otherUserId: otherUserId,
+                                                 kind: .text(content))
+                        
+                        print("Debug: new message \(newMessage)")
+                        
+                        self?.messages.append(newMessage)
+                    }else{
+                        print("Debug: Cannot append the message to message collection")
+                    }
+                    
+                    self?.messagesCollectionView.reloadData()
+                }
+            }
+        }
         
     }
     
@@ -82,14 +123,22 @@ extension ChatViewController: InputBarAccessoryViewDelegate{
         // Upload the text to the database
         // Database design:
         
-        // safe email
-        guard let email = UserDefaults.standard.string(forKey: "user_email") else {
-            print("Debug: cannot get useDefaults user email")
-            return
-        }
-        let safeEmail = DatabaseManager.safeEmail(email: email)
         
-        let message = Message(sender: selfSender, messageId: email, sentDate: Date(), otherUserId: self.otherUserId, kind: .text(text))
+        
+        let date = Date()
+        let calendar = Calendar.current
+        let time = calendar.dateComponents([.year, .month, .day, .hour, .minute, .second],
+                                           from: date)
+        
+        guard let year = time.year, let month = time.month,
+              let day = time.day, let hour = time.hour, let minute = time.minute, let second = time.second else{
+                  print("Debug: cannot convert time \(time)")
+                  return
+              }
+        
+        let messageId = "conversation_\(safeEmail)_to_\(self.otherUserEmail)_\(year)_\(month)_\(day)_\(hour)_\(minute)_\(second)"
+        
+        let message = Message(sender: selfSender, messageId: messageId, sentDate: Date(), otherUserId: self.otherUserEmail, kind: .text(text))
         
         DatabaseManager.shared.uploadMessage(safeEmail: safeEmail, message: message)
     }

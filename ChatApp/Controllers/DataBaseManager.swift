@@ -9,6 +9,7 @@ import Foundation
 import FirebaseDatabase
 import CoreMedia
 
+
 final class DatabaseManager{
     static let shared = DatabaseManager()
     private let database = Database.database().reference()
@@ -20,51 +21,68 @@ final class DatabaseManager{
     }
 }
 
-// MARK: - Upload Messages to the Database
+// MARK: - Upload or Fetch Messages from the Database
 extension DatabaseManager{
     // Path: safeEmail -> conversations (array)
     // Data structure: [conversationID: String, content: String, date: Date(), senderEmail: String]
-        // id: conversation_email1_email2_date
+    // id: conversation_email1_email2_date
     public func uploadMessage(safeEmail: String, message: Message){
         
         database.child(safeEmail).child("conversation").observeSingleEvent(of: .value) {[weak self] snapShot in
             // if conversation doesn't exist, then create one
             var conversation: [[String: Any]]
             
-            if !snapShot.exists(){
-                conversation = [[
-                    "id": message.messageId,
-                    "latest_message" :
-                        [
+            let newMessage : [String : Any] = [
+                "id": message.messageId,
+                "latest_message" :
+                    [
                         "content": message.message,
                         "date": message.dateString
-                         ],
-                    "other_user_email": message.otherUserId]]
+                    ],
+                "other_user_email": message.otherUserId]
+            
+            if !snapShot.exists(){
+                print("Debug: No conversation list exist. Create a new one")
+                conversation = [newMessage]
             }else{
                 guard let data = snapShot.value else{
-                    print("Debug: failed to get user message data \(snapShot.value)")
+                    print("Debug: failed to get user message data \(snapShot.value ?? "")")
                     return
                 }
                 
+                print("Debug: fetch conversation data: \(data)")
+                
                 conversation = data as? [[String : Any]] ?? [[:]]
-                conversation.append([
-                    "id": message.messageId,
-                    "latest_message" :
-                        [
-                        "content": message.message,
-                        "date": message.dateString
-                         ],
-                    "other_user_email": message.otherUserId])
+                conversation.append(newMessage)
             }
             
             self?.database.child(safeEmail).child("conversation").setValue(conversation) { error, _ in
                 guard error == nil else {
-                    print("Debug: Failed to upload message \(error?.localizedDescription)")
+                    print("Debug: Failed to upload message \(error!.localizedDescription)")
                     return
                 }
                 
             }
             
+        }
+    }
+    
+    /// Fetch messages from the database
+    public func fetchMessages(userEmail: String, otherUserEmail: String,
+                              completion: @escaping (Result<[[String: Any]], Error>) -> Void){
+        database.child(userEmail).child("conversation").observeSingleEvent(of: .value) { snapShot in
+            guard let value = snapShot.value else {
+                print("Debug: failed to fetch messages from the database")
+                completion(.failure(DataBaseManagerError.fetchMessagesError))
+                return
+            }
+            
+            if let messages = value as? [[String: Any]]{
+                completion(.success(messages))
+            }else{
+                print("Debug: Cannot convert data to messages collection \(value)")
+                completion(.failure(DataBaseManagerError.fetchMessagesError))
+            }
         }
     }
 }
@@ -157,3 +175,7 @@ extension DatabaseManager{
     }
 }
 
+
+enum DataBaseManagerError: Error{
+    case fetchMessagesError
+}
