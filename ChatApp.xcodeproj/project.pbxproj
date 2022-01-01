@@ -24,6 +24,8 @@
 		B9B70D44277C21440025FAEA /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9B70D43277C21440025FAEA /* Message.swift */; };
 		B9B85D0D277205F300B113D0 /* MessageKit in Frameworks */ = {isa = PBXBuildFile; productRef = B9B85D0C277205F300B113D0 /* MessageKit */; };
 		B9BECA9E2776333000CFDAAE /* SDWebImage in Frameworks */ = {isa = PBXBuildFile; productRef = B9BECA9D2776333000CFDAAE /* SDWebImage */; };
+		B9E6CB5B277EAD30008FE433 /* ConversationTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9E6CB5A277EAD30008FE433 /* ConversationTableViewCell.swift */; };
+		B9E6CB5D277EEC43008FE433 /* Conversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9E6CB5C277EEC43008FE433 /* Conversation.swift */; };
 		B9EEBCC72765DBF7009E0192 /* DataBaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9EEBCC62765DBF7009E0192 /* DataBaseManager.swift */; };
 		B9EEBCC92766065A009E0192 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B9EEBCC82766065A009E0192 /* GoogleService-Info.plist */; };
 		B9F47BBA2773626D003204AA /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9F47BB92773626D003204AA /* StorageManager.swift */; };
@@ -49,6 +51,8 @@
 		B9A0D417276F18F6004170BE /* credentials.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = credentials.plist; sourceTree = SOURCE_ROOT; };
 		B9B70D41277C158C0025FAEA /* Chatuser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chatuser.swift; sourceTree = "<group>"; };
 		B9B70D43277C21440025FAEA /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
+		B9E6CB5A277EAD30008FE433 /* ConversationTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationTableViewCell.swift; sourceTree = "<group>"; };
+		B9E6CB5C277EEC43008FE433 /* Conversation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Conversation.swift; sourceTree = "<group>"; };
 		B9EEBCC62765DBF7009E0192 /* DataBaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataBaseManager.swift; sourceTree = "<group>"; };
 		B9EEBCC82766065A009E0192 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
 		B9F47BB92773626D003204AA /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
@@ -94,12 +98,21 @@
 			path = Login;
 			sourceTree = "<group>";
 		};
+		B9277BF42780861B00636330 /* Manager */ = {
+			isa = PBXGroup;
+			children = (
+				B9EEBCC62765DBF7009E0192 /* DataBaseManager.swift */,
+			);
+			path = Manager;
+			sourceTree = "<group>";
+		};
 		B9290A9D2770DC34002B7194 /* Chat */ = {
 			isa = PBXGroup;
 			children = (
 				F5955CFA2732603500C1A5C5 /* ConversationViewController.swift */,
 				B9290A9E2770DC4D002B7194 /* ChatViewController.swift */,
 				B90FA02A2773334D00EB848C /* NewConversationViewController.swift */,
+				B9E6CB5A277EAD30008FE433 /* ConversationTableViewCell.swift */,
 			);
 			path = Chat;
 			sourceTree = "<group>";
@@ -131,6 +144,7 @@
 		F5955CF52732603500C1A5C5 /* ChatApp */ = {
 			isa = PBXGroup;
 			children = (
+				B9277BF42780861B00636330 /* Manager */,
 				B9EEBCC82766065A009E0192 /* GoogleService-Info.plist */,
 				F5955D0E27329CD300C1A5C5 /* Controllers */,
 				F5955D0D27329CCD00C1A5C5 /* Views */,
@@ -167,6 +181,7 @@
 			children = (
 				B9B70D41277C158C0025FAEA /* Chatuser.swift */,
 				B9B70D43277C21440025FAEA /* Message.swift */,
+				B9E6CB5C277EEC43008FE433 /* Conversation.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -185,7 +200,6 @@
 				B95C04BA2775D97E0090D7B0 /* Profile */,
 				B9290A9D2770DC34002B7194 /* Chat */,
 				B91FB330275FC0070007DC08 /* Login */,
-				B9EEBCC62765DBF7009E0192 /* DataBaseManager.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -319,6 +333,7 @@
 				B91FB32D275FBFB50007DC08 /* LoginViewController.swift in Sources */,
 				B9EEBCC72765DBF7009E0192 /* DataBaseManager.swift in Sources */,
 				B9F47BBA2773626D003204AA /* StorageManager.swift in Sources */,
+				B9E6CB5D277EEC43008FE433 /* Conversation.swift in Sources */,
 				B944BFA22760F52D006CEDE3 /* Extensions.swift in Sources */,
 				B91FB32F275FBFE50007DC08 /* RegisterViewController.swift in Sources */,
 				F5955CFB2732603500C1A5C5 /* ConversationViewController.swift in Sources */,
@@ -326,6 +341,7 @@
 				B981753927688E6A001C0FDA /* ProfileViewController.swift in Sources */,
 				B9B70D42277C158C0025FAEA /* Chatuser.swift in Sources */,
 				B9B70D44277C21440025FAEA /* Message.swift in Sources */,
+				B9E6CB5B277EAD30008FE433 /* ConversationTableViewCell.swift in Sources */,
 				B9290A9F2770DC4D002B7194 /* ChatViewController.swift in Sources */,
 				B90FA02B2773334D00EB848C /* NewConversationViewController.swift in Sources */,
 				F5955CF92732603500C1A5C5 /* SceneDelegate.swift in Sources */,

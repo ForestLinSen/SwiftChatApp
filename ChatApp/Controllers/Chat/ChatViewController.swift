@@ -33,9 +33,11 @@ class ChatViewController: MessagesViewController {
     }()
     
     private let otherUserEmail: String
+    private let otherUserName: String
     
-    init(otherUserEmail: String){
+    init(otherUserEmail: String, otherUserName: String = "Name: Foo"){
         self.otherUserEmail = otherUserEmail
+        self.otherUserName = otherUserName
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -75,7 +77,7 @@ class ChatViewController: MessagesViewController {
                        let content = latestMessage["content"] ,
                        let otherUserId = message["other_user_email"] as? String{
                         
-                        let newMessage = Message(sender: self?.selfSender as SenderType,
+                        let newMessage = Message(sender: self?.selfSender as! SenderType,
                                                  messageId: id,
                                                  sentDate: Date(),
                                                  otherUserId: otherUserId,
@@ -140,6 +142,8 @@ extension ChatViewController: InputBarAccessoryViewDelegate{
         
         let message = Message(sender: selfSender, messageId: messageId, sentDate: Date(), otherUserId: self.otherUserEmail, kind: .text(text))
         
-        DatabaseManager.shared.uploadMessage(safeEmail: safeEmail, message: message)
+        DatabaseManager.shared.uploadMessage(safeEmail: safeEmail,
+                                             message: message,
+                                             otherUserEmail:)
     }
 }

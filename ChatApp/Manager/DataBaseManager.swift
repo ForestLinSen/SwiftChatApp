@@ -26,9 +26,9 @@ extension DatabaseManager{
     // Path: safeEmail -> conversations (array)
     // Data structure: [conversationID: String, content: String, date: Date(), senderEmail: String]
     // id: conversation_email1_email2_date
-    public func uploadMessage(safeEmail: String, message: Message){
+    public func uploadMessage(safeEmail: String, message: Message, otherUserEmail: String){
         
-        database.child(safeEmail).child("conversation").observeSingleEvent(of: .value) {[weak self] snapShot in
+        database.child("\(safeEmail)/conversation/\(otherUserEmail)").observeSingleEvent(of: .value) {[weak self] snapShot in
             // if conversation doesn't exist, then create one
             var conversation: [[String: Any]]
             
@@ -67,6 +67,8 @@ extension DatabaseManager{
         }
     }
     
+}
+    
     /// Fetch messages from the database
     public func fetchMessages(userEmail: String, otherUserEmail: String,
                               completion: @escaping (Result<[[String: Any]], Error>) -> Void){
@@ -77,13 +79,36 @@ extension DatabaseManager{
                 return
             }
             
-            if let messages = value as? [[String: Any]]{
-                completion(.success(messages))
-            }else{
-                print("Debug: Cannot convert data to messages collection \(value)")
-                completion(.failure(DataBaseManagerError.fetchMessagesError))
-            }
-        }
+//            if let message = value as? [[String: Any]]{
+//                let conversationCollection = message.compactMap {
+//                    if let latestMessage = $0["latest_message"] as? [String: String]{
+//                        Conversation(id: "const", otherUserName: $0[], otherUserEmail: <#String#>, latestMessage: <#LatestMessage#>
+//                    }
+//
+//                }
+//            }
+            
+            
+//            if let message = value as? [[String: Any]]{
+//
+//                if let id = message["id"] as? String,
+//                   let latestMessage = message["latest_message"] as? [String: String],
+//                   let sentDate = latestMessage["date"] ,
+//                   let content = latestMessage["content"] ,
+//                   let otherUserId = message["other_user_email"] as? String{
+//
+//                    let newMessage = Message(sender: self?.selfSender as! SenderType,
+//                                             messageId: id,
+//                                             sentDate: Date(),
+//                                             otherUserId: otherUserId,
+//                                             kind: .text(content))
+//
+//                completion(.success(message))
+//            }else{
+//                print("Debug: Cannot convert data to messages collection \(value)")
+//                completion(.failure(DataBaseManagerError.fetchMessagesError))
+//            }
+//        }
     }
 }
 

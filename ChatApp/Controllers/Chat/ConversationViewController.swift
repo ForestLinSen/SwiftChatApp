@@ -18,7 +18,7 @@ class ConversationViewController: UIViewController {
     
     let tableView: UITableView = {
         let tableView = UITableView()
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        tableView.register(ConversationTableViewCell.self, forCellReuseIdentifier: "cell")
         return tableView
     }()
 
@@ -119,15 +119,11 @@ extension ConversationViewController: UITableViewDelegate, UITableViewDataSource
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as? ConversationTableViewCell else{
+            return UITableViewCell()
+        }
         
-        var content = cell.defaultContentConfiguration()
-        content.text = "Hello!"
-        content.textProperties.alignment = .natural
-        content.textProperties.color = .gray
-        
-        cell.contentConfiguration = content
-        cell.accessoryType = .disclosureIndicator
+        cell.configure(with: <#T##String#>)
 
         return cell
     }
@@ -139,5 +135,9 @@ extension ConversationViewController: UITableViewDelegate, UITableViewDataSource
         vc.title = "James Bond"
         vc.navigationItem.largeTitleDisplayMode = .never
         self.navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 80;
     }
 }
