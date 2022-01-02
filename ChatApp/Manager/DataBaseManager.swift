@@ -29,34 +29,44 @@ extension DatabaseManager{
     public func uploadMessage(safeEmail: String, message: Message, otherUserEmail: String){
         
         database.child("\(safeEmail)/conversation/\(otherUserEmail)").observeSingleEvent(of: .value) {[weak self] snapShot in
-            // if conversation doesn't exist, then create one
-            var conversation: [[String: Any]]
+            // all the messages
+            //var messages: [[String: String]]
             
-            let newMessage : [String : Any] = [
-                "id": message.messageId,
-                "latest_message" :
-                    [
-                        "content": message.message,
-                        "date": message.dateString
-                    ],
-                "other_user_email": message.otherUserId]
+            // new messages
+            let sendMessage: [String: String] = [
+                "content": message.message,
+                "date": message.dateString
+            ]
+            
+            var uploadData: [String: Any]
+
             
             if !snapShot.exists(){
+                let newMessage : [String : Any] = [
+                    "id": message.messageId,
+                    "latest_message" : sendMessage,
+                    "messages": [sendMessage],
+                    "other_user_email": message.otherUserId]
                 print("Debug: No conversation list exist. Create a new one")
-                conversation = [newMessage]
+                uploadData = newMessage
             }else{
                 guard let data = snapShot.value else{
                     print("Debug: failed to get user message data \(snapShot.value ?? "")")
                     return
                 }
                 
-                print("Debug: fetch conversation data: \(data)")
+                guard var fetchData = data as? [String : Any],
+                      var messageCollection = fetchData["messages"] as? [[String: String]] else{
+                    return
+                }
                 
-                conversation = data as? [[String : Any]] ?? [[:]]
-                conversation.append(newMessage)
+                messageCollection.append(sendMessage)
+                
+                fetchData["messages"] = messageCollection
+                uploadData = fetchData
             }
             
-            self?.database.child(safeEmail).child("conversation").setValue(conversation) { error, _ in
+            self?.database.child(safeEmail).child("conversation/\(otherUserEmail)").setValue(uploadData) { error, _ in
                 guard error == nil else {
                     print("Debug: Failed to upload message \(error!.localizedDescription)")
                     return
@@ -70,14 +80,14 @@ extension DatabaseManager{
 }
     
     /// Fetch messages from the database
-    public func fetchMessages(userEmail: String, otherUserEmail: String,
-                              completion: @escaping (Result<[[String: Any]], Error>) -> Void){
-        database.child(userEmail).child("conversation").observeSingleEvent(of: .value) { snapShot in
-            guard let value = snapShot.value else {
-                print("Debug: failed to fetch messages from the database")
-                completion(.failure(DataBaseManagerError.fetchMessagesError))
-                return
-            }
+//    public func fetchMessages(userEmail: String, otherUserEmail: String,
+//                              completion: @escaping (Result<[[String: Any]], Error>) -> Void){
+//        database.child(userEmail).child("conversation").observeSingleEvent(of: .value) { snapShot in
+//            guard let value = snapShot.value else {
+//                print("Debug: failed to fetch messages from the database")
+//                completion(.failure(DataBaseManagerError.fetchMessagesError))
+//                return
+//            }
             
 //            if let message = value as? [[String: Any]]{
 //                let conversationCollection = message.compactMap {
@@ -109,8 +119,8 @@ extension DatabaseManager{
 //                completion(.failure(DataBaseManagerError.fetchMessagesError))
 //            }
 //        }
-    }
-}
+//    }
+        
 
 
 // MARK: - Search Users

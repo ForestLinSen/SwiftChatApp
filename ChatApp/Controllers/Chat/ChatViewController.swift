@@ -64,36 +64,36 @@ class ChatViewController: MessagesViewController {
         self.messagesCollectionView.messagesDisplayDelegate = self
         self.messageInputBar.delegate = self
         
-        DatabaseManager.shared.fetchMessages(userEmail: self.safeEmail,
-                                             otherUserEmail: self.otherUserEmail) {[weak self] result in
-            switch result{
-            case .failure(_):
-                break
-            case .success(let messagesCollection):
-                for message in messagesCollection {
-                    if let id = message["id"] as? String,
-                       let latestMessage = message["latest_message"] as? [String: String],
-                       let sentDate = latestMessage["date"] ,
-                       let content = latestMessage["content"] ,
-                       let otherUserId = message["other_user_email"] as? String{
-                        
-                        let newMessage = Message(sender: self?.selfSender as! SenderType,
-                                                 messageId: id,
-                                                 sentDate: Date(),
-                                                 otherUserId: otherUserId,
-                                                 kind: .text(content))
-                        
-                        print("Debug: new message \(newMessage)")
-                        
-                        self?.messages.append(newMessage)
-                    }else{
-                        print("Debug: Cannot append the message to message collection")
-                    }
-                    
-                    self?.messagesCollectionView.reloadData()
-                }
-            }
-        }
+//        DatabaseManager.shared.fetchMessages(userEmail: self.safeEmail,
+//                                             otherUserEmail: self.otherUserEmail) {[weak self] result in
+//            switch result{
+//            case .failure(_):
+//                break
+//            case .success(let messagesCollection):
+//                for message in messagesCollection {
+//                    if let id = message["id"] as? String,
+//                       let latestMessage = message["latest_message"] as? [String: String],
+//                       let sentDate = latestMessage["date"] ,
+//                       let content = latestMessage["content"] ,
+//                       let otherUserId = message["other_user_email"] as? String{
+//
+//                        let newMessage = Message(sender: self?.selfSender as! SenderType,
+//                                                 messageId: id,
+//                                                 sentDate: Date(),
+//                                                 otherUserId: otherUserId,
+//                                                 kind: .text(content))
+//
+//                        print("Debug: new message \(newMessage)")
+//
+//                        self?.messages.append(newMessage)
+//                    }else{
+//                        print("Debug: Cannot append the message to message collection")
+//                    }
+//
+//                    self?.messagesCollectionView.reloadData()
+//                }
+//            }
+//        }
         
     }
     
@@ -144,6 +144,6 @@ extension ChatViewController: InputBarAccessoryViewDelegate{
         
         DatabaseManager.shared.uploadMessage(safeEmail: safeEmail,
                                              message: message,
-                                             otherUserEmail:)
+                                             otherUserEmail: self.otherUserName)
     }
 }

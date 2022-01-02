@@ -123,7 +123,7 @@ extension ConversationViewController: UITableViewDelegate, UITableViewDataSource
             return UITableViewCell()
         }
         
-        cell.configure(with: <#T##String#>)
+        //cell.configure(with: <#T##String#>)
 
         return cell
     }
