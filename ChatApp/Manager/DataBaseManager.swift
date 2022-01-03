@@ -26,7 +26,7 @@ extension DatabaseManager{
     // Path: safeEmail -> conversations (array)
     // Data structure: [conversationID: String, content: String, date: Date(), senderEmail: String]
     // id: conversation_email1_email2_date
-    public func uploadMessage(safeEmail: String, message: Message, otherUserEmail: String){
+    public func uploadMessage(safeEmail: String, message: Message, otherUserEmail: String, otherUserName: String){
         
         database.child("\(safeEmail)/conversation/\(otherUserEmail)").observeSingleEvent(of: .value) {[weak self] snapShot in
             // all the messages
@@ -46,7 +46,8 @@ extension DatabaseManager{
                     "id": message.messageId,
                     "latest_message" : sendMessage,
                     "messages": [sendMessage],
-                    "other_user_email": message.otherUserId]
+                    "other_user_email": message.otherUserId,
+                    "other_user_name": otherUserName]
                 print("Debug: No conversation list exist. Create a new one")
                 uploadData = newMessage
             }else{
@@ -77,50 +78,35 @@ extension DatabaseManager{
         }
     }
     
+    public func fetchMessages(userEmail: String, otherUserEmail: String, completion: @escaping (Result<Conversation, Error>) -> Void){
+        
+        self.database.child("\(userEmail)/conversation/\(otherUserEmail)").getData { _, snapShot in
+            guard let data = snapShot.value as? [String: Any],
+            let id = data["id"] as? String,
+            let latestMessageDict = data["latest_message"] as? [String: String],
+            let date =  latestMessageDict["date"],
+            let text = latestMessageDict["content"],
+            let otherUserName = data["other_user_name"] as? String,
+            let otherUserEmail = data["other_user_email"] as? String,
+            let messagesDict = data["messages"] as? [[String: String]]
+            else{
+                print("Debug: cannot fetch the conversation")
+                completion(.failure(DataBaseManagerError.fetchMessagesError))
+                return
+            }
+            
+            let latestMessage = LatestMessage(date: date, text: text)
+            let messages = messagesDict.compactMap {Messages(date: $0["date"] ?? "", text: $0["content"] ?? "")}
+            
+            let conversation = Conversation(id: id, otherUserName: otherUserName, otherUserEmail: otherUserEmail, latestMessage: latestMessage, messages: messages)
+            
+            completion(.success(conversation))
+        }
+    }
+    
 }
     
-    /// Fetch messages from the database
-//    public func fetchMessages(userEmail: String, otherUserEmail: String,
-//                              completion: @escaping (Result<[[String: Any]], Error>) -> Void){
-//        database.child(userEmail).child("conversation").observeSingleEvent(of: .value) { snapShot in
-//            guard let value = snapShot.value else {
-//                print("Debug: failed to fetch messages from the database")
-//                completion(.failure(DataBaseManagerError.fetchMessagesError))
-//                return
-//            }
-            
-//            if let message = value as? [[String: Any]]{
-//                let conversationCollection = message.compactMap {
-//                    if let latestMessage = $0["latest_message"] as? [String: String]{
-//                        Conversation(id: "const", otherUserName: $0[], otherUserEmail: <#String#>, latestMessage: <#LatestMessage#>
-//                    }
-//
-//                }
-//            }
-            
-            
-//            if let message = value as? [[String: Any]]{
-//
-//                if let id = message["id"] as? String,
-//                   let latestMessage = message["latest_message"] as? [String: String],
-//                   let sentDate = latestMessage["date"] ,
-//                   let content = latestMessage["content"] ,
-//                   let otherUserId = message["other_user_email"] as? String{
-//
-//                    let newMessage = Message(sender: self?.selfSender as! SenderType,
-//                                             messageId: id,
-//                                             sentDate: Date(),
-//                                             otherUserId: otherUserId,
-//                                             kind: .text(content))
-//
-//                completion(.success(message))
-//            }else{
-//                print("Debug: Cannot convert data to messages collection \(value)")
-//                completion(.failure(DataBaseManagerError.fetchMessagesError))
-//            }
-//        }
-//    }
-        
+
 
 
 // MARK: - Search Users

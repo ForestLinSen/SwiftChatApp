@@ -12,10 +12,16 @@ struct Conversation{
     let otherUserName: String
     let otherUserEmail: String
     let latestMessage: LatestMessage
+    let messages: [Messages]
 }
 
 struct LatestMessage{
     let date: String
     let text: String
     let isRead: Bool = false
+}
+
+struct Messages{
+    let date: String
+    let text: String
 }

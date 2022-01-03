@@ -60,6 +60,7 @@ class ConversationViewController: UIViewController {
         }
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .compose, target: self, action: #selector(didTapNewChatItem))
+        
 
     }
     
@@ -85,7 +86,8 @@ class ConversationViewController: UIViewController {
             return
         }
         
-        let vc = ChatViewController(otherUserEmail: otherUserEmail)
+        let vc = ChatViewController(otherUserEmail: otherUserEmail,
+        otherUserName: otherUserName)
         vc.title = otherUserName
         vc.navigationItem.largeTitleDisplayMode = .never
         self.navigationController?.pushViewController(vc, animated: true)
