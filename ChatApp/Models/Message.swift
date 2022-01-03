@@ -14,7 +14,7 @@ struct Message: MessageType{
     var sentDate: Date
     var dateString: String{
         let formatter = DateFormatter()
-        formatter.dateStyle = .full
+        formatter.dateFormat = "YYYY-MM-dd HH:mm:ss"
         return formatter.string(from: sentDate)
     }
     let otherUserId: String
