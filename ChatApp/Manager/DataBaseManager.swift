@@ -8,6 +8,7 @@
 import Foundation
 import FirebaseDatabase
 import CoreMedia
+import AVFoundation
 
 
 final class DatabaseManager{
@@ -64,6 +65,7 @@ extension DatabaseManager{
                 messageCollection.append(sendMessage)
                 
                 fetchData["messages"] = messageCollection
+                fetchData["latest_message"] = sendMessage
                 uploadData = fetchData
             }
             
@@ -101,6 +103,44 @@ extension DatabaseManager{
             let conversation = Conversation(id: id, otherUserName: otherUserName, otherUserEmail: otherUserEmail, latestMessage: latestMessage, messages: messages)
             
             completion(.success(conversation))
+        }
+    }
+    
+    public func fetchAllConversations(userEmail: String, completion: @escaping (Result<[Conversation], Error>) -> Void){
+        self.database.child("\(userEmail)/conversation").getData { _, snapShot in
+            
+            //print("Debug: snapShot value: \(snapShot.value)")
+            
+            guard let allData = snapShot.children.allObjects as? [DataSnapshot] else {
+                print("Debug: cannot get conversation data from firebase \(snapShot.children.allObjects)")
+                completion(.failure(DataBaseManagerError.fetchMessagesError))
+                return
+            }
+ 
+            let conversationCollection = allData.compactMap { data -> Conversation? in
+                
+                
+                guard let dataElement = data.value as? [String: Any],
+                    let id = dataElement["id"] as? String,
+                      let otherUserName = dataElement["other_user_name"] as? String,
+                      let otherUserEmail = dataElement["other_user_name"] as? String,
+                      let latestMessage = dataElement["latest_message"] as? [String: String],
+                      let content = latestMessage["content"],
+                      let date = latestMessage["date"],
+                      let messages = dataElement["messages"] as? [[String: String]] else {
+                          completion(.failure(DataBaseManagerError.fetchMessagesError))
+                          print("Debug: cannot fetch conversations - DatabaseManager")
+                          return nil
+                      }
+                
+                let messagesCollection = messages.compactMap{Messages(date: $0["content"] ?? "no date", text: $0["content"] ?? "no content")}
+                
+                let conv = Conversation(id: id, otherUserName: otherUserName, otherUserEmail: otherUserEmail, latestMessage: LatestMessage(date: date, text: content), messages: messagesCollection)
+                
+                return conv
+            }
+            
+            completion(.success(conversationCollection))
         }
     }
     

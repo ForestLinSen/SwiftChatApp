@@ -15,6 +15,7 @@ class ConversationViewController: UIViewController {
     private var isFetched = false
     private let spinner = JGProgressHUD(style: .dark)
     private let conversationViewController = NewConversationViewController()
+    private var conversationCollection = [Conversation]()
     
     let tableView: UITableView = {
         let tableView = UITableView()
@@ -60,6 +61,19 @@ class ConversationViewController: UIViewController {
         }
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .compose, target: self, action: #selector(didTapNewChatItem))
+        
+        guard let email = UserDefaults.standard.string(forKey: "user_email") else{return}
+        let safeEmail = DatabaseManager.safeEmail(email: email)
+        print("Debug: user safe email \(safeEmail)")
+        DatabaseManager.shared.fetchAllConversations(userEmail: safeEmail) {[weak self] result in
+            switch result{
+            case .failure(_):
+                print("Debug: Cannot fetch conversation collection")
+            case .success(let conversation):
+                self?.conversationCollection = conversation
+                self?.tableView.reloadData()
+            }
+        }
         
 
     }
@@ -117,7 +131,7 @@ class ConversationViewController: UIViewController {
 
 extension ConversationViewController: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
+        return self.conversationCollection.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -125,7 +139,7 @@ extension ConversationViewController: UITableViewDelegate, UITableViewDataSource
             return UITableViewCell()
         }
         
-        //cell.configure(with: <#T##String#>)
+        cell.configure(with: self.conversationCollection[indexPath.row])
 
         return cell
     }
