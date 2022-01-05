@@ -123,7 +123,7 @@ extension DatabaseManager{
                 guard let dataElement = data.value as? [String: Any],
                     let id = dataElement["id"] as? String,
                       let otherUserName = dataElement["other_user_name"] as? String,
-                      let otherUserEmail = dataElement["other_user_name"] as? String,
+                      let otherUserEmail = dataElement["other_user_email"] as? String,
                       let latestMessage = dataElement["latest_message"] as? [String: String],
                       let content = latestMessage["content"],
                       let date = latestMessage["date"],

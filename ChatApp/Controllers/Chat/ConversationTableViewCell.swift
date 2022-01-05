@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SDWebImage
 
 class ConversationTableViewCell: UITableViewCell {
     
@@ -70,6 +71,22 @@ class ConversationTableViewCell: UITableViewCell {
     public func configure(with model: Conversation){
         self.nameLabel.text = model.otherUserName
         self.conversationLabel.text = model.latestMessage.text
+
+        let fileName = "images/\(model.otherUserEmail)_profile_picture.png"
+        print("Debug: profile image file name \(fileName)")
+  
+        StorageManager.shared.getProfileImage(path: fileName) {[weak self] result in
+            
+            switch result{
+            case .failure(let error):
+                print("Debug: cannot get profile image url: \(error)")
+                
+            case .success(let url):
+                //imageView.sd_setImage(with: url, completed: nil)
+                self?.profileImageView.sd_setImage(with: url, completed: nil)
+            }
+            
+        }
     }
     
 }

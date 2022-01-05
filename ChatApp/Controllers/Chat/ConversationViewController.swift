@@ -64,7 +64,7 @@ class ConversationViewController: UIViewController {
         
         guard let email = UserDefaults.standard.string(forKey: "user_email") else{return}
         let safeEmail = DatabaseManager.safeEmail(email: email)
-        print("Debug: user safe email \(safeEmail)")
+        //print("Debug: user safe email \(safeEmail)")
         DatabaseManager.shared.fetchAllConversations(userEmail: safeEmail) {[weak self] result in
             switch result{
             case .failure(_):
