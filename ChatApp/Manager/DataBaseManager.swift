@@ -82,7 +82,10 @@ extension DatabaseManager{
     
     public func fetchMessages(userEmail: String, otherUserEmail: String, completion: @escaping (Result<Conversation, Error>) -> Void){
         
-        self.database.child("\(userEmail)/conversation/\(otherUserEmail)").getData { _, snapShot in
+        self.database.child("\(userEmail)/conversation/\(otherUserEmail)").observe(.value) { snapShot in
+            
+            print("Debug: debug value \(snapShot.value)")
+            
             guard let data = snapShot.value as? [String: Any],
             let id = data["id"] as? String,
             let latestMessageDict = data["latest_message"] as? [String: String],
@@ -104,6 +107,7 @@ extension DatabaseManager{
             
             completion(.success(conversation))
         }
+
     }
     
     public func fetchAllConversations(userEmail: String, completion: @escaping (Result<[Conversation], Error>) -> Void){

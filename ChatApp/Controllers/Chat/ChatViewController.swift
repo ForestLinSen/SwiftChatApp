@@ -35,6 +35,7 @@ class ChatViewController: MessagesViewController {
     private let otherUserEmail: String
     private let otherUserName: String
     
+    
     init(otherUserEmail: String, otherUserName: String = "Name: Foo"){
         self.otherUserEmail = otherUserEmail
         self.otherUserName = otherUserName

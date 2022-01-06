@@ -14,7 +14,7 @@ class ConversationTableViewCell: UITableViewCell {
         let profileImageView = UIImageView()
         profileImageView.image = UIImage(systemName: "person")
         profileImageView.contentMode = .scaleAspectFill
-        profileImageView.layer.cornerRadius = 50
+        print("Debug: corner radius \(profileImageView.layer.cornerRadius)")
         profileImageView.clipsToBounds = true
         
         return profileImageView
@@ -55,6 +55,7 @@ class ConversationTableViewCell: UITableViewCell {
                                         y: padding,
                                         width: imageSize,
                                         height: imageSize)
+        profileImageView.layer.cornerRadius = profileImageView.frame.size.height / 2
         
         nameLabel.frame = CGRect(x: profileImageView.frame.width + padding*2,
                                  y: padding*1.5,
@@ -62,7 +63,7 @@ class ConversationTableViewCell: UITableViewCell {
                                  height: padding*2)
         
         conversationLabel.frame = CGRect(x: profileImageView.frame.width + padding*2,
-                                         y: nameLabel.frame.size.height + padding,
+                                         y: nameLabel.frame.size.height + padding/2,
                                  width: imageSize*3,
                                  height: imageSize)
 
