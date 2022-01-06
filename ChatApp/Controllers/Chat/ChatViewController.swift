@@ -71,13 +71,13 @@ class ChatViewController: MessagesViewController {
                 print("Debug: cannot fetch user messages")
             case .success(let conversation):
                 let fetchedMessages = conversation.messages
+                self?.messages = [Message]()
                 for message in fetchedMessages {
                     
                     let dateFormatter = DateFormatter()
                     dateFormatter.dateFormat = "YYYY-MM-dd HH:mm:ss"
                     let date = dateFormatter.date(from: message.date)
-                    print("Debug: Message date: \(message.date) / Converted date: \(date)")
-                    
+    
                     self?.messages.append(Message(sender: self?.selfSender as! SenderType, messageId: "", sentDate: date ?? Date(), otherUserId: "", kind: .text(message.text)))
                 }
                 
