@@ -307,9 +307,23 @@ class LoginViewController: UIViewController {
                       self?.spinner.dismiss(animated: true)
                   }
                   
-                  if(UserDefaults.standard.string(forKey: "user_email") == nil){
-                      UserDefaults.standard.set(email, forKey: "user_email")
+
+                  UserDefaults.standard.set(email, forKey: "user_email")
+
+                  DatabaseManager.shared.fetchUserData(email: K.currentUserSafeEmail) { result in
+                      switch result{
+                      case .failure(_):
+                          break
+                      case .success(let data):
+                          guard let firstName = data["firstName"] as? String,
+                                let lastName = data["lastName"] as? String else {
+                                    return
+                                }
+                          
+                          UserDefaults.standard.set("\(firstName) \(lastName)", forKey: "user_name")
+                      }
                   }
+                  
                   
                   self?.navigationController?.dismiss(animated: true, completion: nil)
              }

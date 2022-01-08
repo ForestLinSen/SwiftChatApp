@@ -27,7 +27,11 @@ extension DatabaseManager{
     // Path: safeEmail -> conversations (array)
     // Data structure: [conversationID: String, content: String, date: Date(), senderEmail: String]
     // id: conversation_email1_email2_date
-    public func uploadMessage(safeEmail: String, message: Message, otherUserEmail: String, otherUserName: String){
+    public func uploadMessage(safeEmail: String,
+                              message: Message,
+                              otherUserEmail: String,
+                              otherUserName: String,
+                              senderEmail: String){
         
         database.child("\(safeEmail)/conversation/\(otherUserEmail)").observeSingleEvent(of: .value) {[weak self] snapShot in
             // all the messages
@@ -36,7 +40,8 @@ extension DatabaseManager{
             // new messages
             let sendMessage: [String: String] = [
                 "content": message.message,
-                "date": message.dateString
+                "date": message.dateString,
+                "senderEmail": senderEmail
             ]
             
             var uploadData: [String: Any]
@@ -88,20 +93,20 @@ extension DatabaseManager{
             
             guard let data = snapShot.value as? [String: Any],
             let id = data["id"] as? String,
+   
             let latestMessageDict = data["latest_message"] as? [String: String],
             let date =  latestMessageDict["date"],
             let text = latestMessageDict["content"],
             let otherUserName = data["other_user_name"] as? String,
             let otherUserEmail = data["other_user_email"] as? String,
-            let messagesDict = data["messages"] as? [[String: String]]
-            else{
+            let messagesDict = data["messages"] as? [[String: String]] else{
                 print("Debug: cannot fetch the conversation")
                 completion(.failure(DataBaseManagerError.fetchMessagesError))
                 return
             }
             
             let latestMessage = LatestMessage(date: date, text: text)
-            let messages = messagesDict.compactMap {Messages(date: $0["date"] ?? "", text: $0["content"] ?? "")}
+            let messages = messagesDict.compactMap {Messages(date: $0["date"] ?? "No date found", text: $0["content"] ?? "", senderEmail: $0["senderEmail"] ?? "no sender email found")}
             
             let conversation = Conversation(id: id, otherUserName: otherUserName, otherUserEmail: otherUserEmail, latestMessage: latestMessage, messages: messages)
             
@@ -137,7 +142,7 @@ extension DatabaseManager{
                           return nil
                       }
                 
-                let messagesCollection = messages.compactMap{Messages(date: $0["content"] ?? "no date", text: $0["content"] ?? "no content")}
+                let messagesCollection = messages.compactMap{Messages(date: $0["content"] ?? "no date", text: $0["content"] ?? "no content", senderEmail: $0["senderEmail"] ?? "no sender email found")}
                 
                 let conv = Conversation(id: id, otherUserName: otherUserName, otherUserEmail: otherUserEmail, latestMessage: LatestMessage(date: date, text: content), messages: messagesCollection)
                 
@@ -165,6 +170,19 @@ extension DatabaseManager{
             
             //print("Debug: successful getting users:  \(result)")
             completion(.success(result))
+        }
+    }
+    
+    public func fetchUserData(email: String, completion: @escaping (Result<[String: Any], Error>) -> Void){
+        self.database.child(email).getData { _, snapShot in
+            guard let userData = snapShot.value as? [String: Any] else{
+                print("Debug: Cannot get the user data ")
+                completion(.failure(FetchError.failedToFetchUsers))
+                return
+            }
+            
+            completion(.success(userData))
+            
         }
     }
 }

@@ -21,7 +21,9 @@ class ChatViewController: MessagesViewController {
     private var messages = [Message]()
     
     // TODO: selfSender and the targetSender
-    private let selfSender = Sender(senderId: "1", displayName: "Mu", photoURL: "")
+    private let selfSender = Sender(senderId: K.currentUserSafeEmail,
+                                    displayName: UserDefaults.standard.string(forKey: "user_name") ?? "",
+                                    photoURL: "")
     
     private let safeEmail: String = {
         // safe email
@@ -50,15 +52,15 @@ class ChatViewController: MessagesViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        messages.append(Message(sender: selfSender,
-                                messageId: "2",
-                                sentDate: Date(), otherUserId: "Dummy Id",
-                                kind: .text("Hello world")))
-        
-        messages.append(Message(sender: selfSender,
-                                messageId: "2",
-                                sentDate: Date(), otherUserId: "Dummy Id",
-                                kind: .text("Hello world Hello world Hello world")))
+//        messages.append(Message(sender: selfSender,
+//                                messageId: "2",
+//                                sentDate: Date(), otherUserId: "Dummy Id",
+//                                kind: .text("Hello world")))
+//
+//        messages.append(Message(sender: selfSender,
+//                                messageId: "2",
+//                                sentDate: Date(), otherUserId: "Dummy Id",
+//                                kind: .text("Hello world Hello world Hello world")))
         
         self.messagesCollectionView.messagesDataSource = self
         self.messagesCollectionView.messagesLayoutDelegate = self
@@ -78,7 +80,31 @@ class ChatViewController: MessagesViewController {
                     dateFormatter.dateFormat = "YYYY-MM-dd HH:mm:ss"
                     let date = dateFormatter.date(from: message.date)
     
-                    self?.messages.append(Message(sender: self?.selfSender as! SenderType, messageId: "", sentDate: date ?? Date(), otherUserId: "", kind: .text(message.text)))
+                    // self?.selfSender as! SenderType
+                    
+                    //if message.senderEm
+                    
+                    var sender: SenderType
+                    
+                    print("Debug: message senderEmail \(message.text)")
+                    
+                    if(message.senderEmail == self?.selfSender.senderId){
+                        
+                        sender = self?.selfSender as! SenderType
+                        print("Debug: this message sender ID \(sender.senderId)")
+                    }else{
+                        
+                        sender = Sender(senderId: message.senderEmail, displayName: self?.otherUserName ?? "", photoURL: "")
+                    }
+                    
+                    
+                    
+                    self?.messages.append(Message(sender: sender,
+                                                  messageId: sender.senderId,
+                                                  sentDate: date ?? Date(),
+                                                  otherUserId: "",
+                                                  kind: .text(message.text)))
+
                 }
                 
                 self?.messagesCollectionView.reloadData()
@@ -131,6 +157,8 @@ extension ChatViewController: InputBarAccessoryViewDelegate{
         
         DatabaseManager.shared.uploadMessage(safeEmail: safeEmail,
                                              message: message,
-                                             otherUserEmail: self.otherUserEmail, otherUserName: otherUserName)
+                                             otherUserEmail: self.otherUserEmail,
+                                             otherUserName: otherUserName,
+                                             senderEmail: K.currentUserSafeEmail)
     }
 }

@@ -13,6 +13,7 @@ struct Conversation{
     let otherUserEmail: String
     let latestMessage: LatestMessage
     let messages: [Messages]
+    
 }
 
 struct LatestMessage{
@@ -24,4 +25,5 @@ struct LatestMessage{
 struct Messages{
     let date: String
     let text: String
+    let senderEmail: String
 }
