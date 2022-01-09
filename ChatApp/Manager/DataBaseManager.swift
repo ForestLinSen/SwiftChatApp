@@ -52,7 +52,7 @@ extension DatabaseManager{
                     "id": message.messageId,
                     "latest_message" : sendMessage,
                     "messages": [sendMessage],
-                    "other_user_email": message.otherUserId,
+                    "other_user_email": otherUserEmail,
                     "other_user_name": otherUserName]
                 print("Debug: No conversation list exist. Create a new one")
                 uploadData = newMessage
@@ -127,7 +127,6 @@ extension DatabaseManager{
             }
  
             let conversationCollection = allData.compactMap { data -> Conversation? in
-                
                 
                 guard let dataElement = data.value as? [String: Any],
                     let id = dataElement["id"] as? String,

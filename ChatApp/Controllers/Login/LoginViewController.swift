@@ -47,7 +47,7 @@ class LoginViewController: UIViewController {
         field.layer.borderWidth = 1
         field.layer.borderColor = UIColor.lightGray.cgColor
         field.placeholder = "Email Address"
-        field.text = "joe@aq.com"
+        field.text = "123@qq.com"
         
         // padding
         field.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 20, height: field.frame.size.height))
@@ -206,12 +206,27 @@ class LoginViewController: UIViewController {
                 return
             }
             
-            print("Debug: login user: \(authResult?.user)")
-            
+    
 //            let vc = ConversationViewController()
 //            let nv = UINavigationController(rootViewController: vc)
 //            nv.modalPresentationStyle = .fullScreen
 //            self.present(nv, animated: true, completion: nil)
+            
+            UserDefaults.standard.set(email, forKey: "user_email")
+
+            DatabaseManager.shared.fetchUserData(email: K.currentUserSafeEmail) { result in
+                switch result{
+                case .failure(_):
+                    break
+                case .success(let data):
+                    guard let firstName = data["firstName"] as? String,
+                          let lastName = data["lastName"] as? String else {
+                              return
+                          }
+                    
+                    UserDefaults.standard.set("\(firstName) \(lastName)", forKey: "user_name")
+                }
+            }
             
             self?.navigationController?.dismiss(animated: true, completion: nil)
             

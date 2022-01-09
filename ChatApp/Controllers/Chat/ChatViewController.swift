@@ -25,14 +25,7 @@ class ChatViewController: MessagesViewController {
                                     displayName: UserDefaults.standard.string(forKey: "user_name") ?? "",
                                     photoURL: "")
     
-    private let safeEmail: String = {
-        // safe email
-        guard let email = UserDefaults.standard.string(forKey: "user_email") else {
-            print("Debug: cannot get useDefaults user email")
-            return ""
-        }
-        return DatabaseManager.safeEmail(email: email)
-    }()
+    private let safeEmail = K.currentUserSafeEmail
     
     private let otherUserEmail: String
     private let otherUserName: String
@@ -96,9 +89,7 @@ class ChatViewController: MessagesViewController {
                         
                         sender = Sender(senderId: message.senderEmail, displayName: self?.otherUserName ?? "", photoURL: "")
                     }
-                    
-                    
-                    
+
                     self?.messages.append(Message(sender: sender,
                                                   messageId: sender.senderId,
                                                   sentDate: date ?? Date(),
@@ -153,12 +144,20 @@ extension ChatViewController: InputBarAccessoryViewDelegate{
         
         let messageId = "conversation_\(safeEmail)_to_\(self.otherUserEmail)_\(year)_\(month)_\(day)_\(hour)_\(minute)_\(second)"
         
+        print("Debug: current safe email \(safeEmail)")
+        
         let message = Message(sender: selfSender, messageId: messageId, sentDate: Date(), otherUserId: self.otherUserEmail, kind: .text(text))
         
         DatabaseManager.shared.uploadMessage(safeEmail: safeEmail,
                                              message: message,
                                              otherUserEmail: self.otherUserEmail,
                                              otherUserName: otherUserName,
-                                             senderEmail: K.currentUserSafeEmail)
+                                             senderEmail: safeEmail)
+        
+        DatabaseManager.shared.uploadMessage(safeEmail: self.otherUserEmail,
+                                             message: message,
+                                             otherUserEmail: safeEmail,
+                                             otherUserName: selfSender.displayName,
+                                             senderEmail: safeEmail)
     }
 }
