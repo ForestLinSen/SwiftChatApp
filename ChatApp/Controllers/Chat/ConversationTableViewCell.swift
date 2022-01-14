@@ -14,9 +14,7 @@ class ConversationTableViewCell: UITableViewCell {
         let profileImageView = UIImageView()
         profileImageView.image = UIImage(systemName: "person")
         profileImageView.contentMode = .scaleAspectFill
-        print("Debug: corner radius \(profileImageView.layer.cornerRadius)")
         profileImageView.clipsToBounds = true
-        
         return profileImageView
     }()
     

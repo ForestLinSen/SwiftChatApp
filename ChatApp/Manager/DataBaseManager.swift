@@ -116,8 +116,8 @@ extension DatabaseManager{
     }
     
     public func fetchAllConversations(userEmail: String, completion: @escaping (Result<[Conversation], Error>) -> Void){
-        self.database.child("\(userEmail)/conversation").getData { _, snapShot in
-            
+        self.database.child("\(userEmail)/conversation").observe(.value, with: { snapShot in
+   
             //print("Debug: snapShot value: \(snapShot.value)")
             
             guard let allData = snapShot.children.allObjects as? [DataSnapshot] else {
@@ -149,7 +149,7 @@ extension DatabaseManager{
             }
             
             completion(.success(conversationCollection))
-        }
+        })
     }
     
 }

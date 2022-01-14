@@ -8,6 +8,7 @@
 import UIKit
 import MessageKit
 import InputBarAccessoryView
+import PhotosUI
 
 struct Sender: SenderType{
     var senderId: String
@@ -16,7 +17,7 @@ struct Sender: SenderType{
 }
 
 
-class ChatViewController: MessagesViewController {
+class ChatViewController: MessagesViewController{
     
     private var messages = [Message]()
     
@@ -59,6 +60,7 @@ class ChatViewController: MessagesViewController {
         self.messagesCollectionView.messagesLayoutDelegate = self
         self.messagesCollectionView.messagesDisplayDelegate = self
         self.messageInputBar.delegate = self
+        self.setupInputButton()
         
         DatabaseManager.shared.fetchMessages(userEmail: self.safeEmail, otherUserEmail: self.otherUserEmail) {[weak self] result in
             switch result{
@@ -76,7 +78,6 @@ class ChatViewController: MessagesViewController {
                     // self?.selfSender as! SenderType
                     
                     //if message.senderEm
-                    
                     var sender: SenderType
                     
                     print("Debug: message senderEmail \(message.text)")
@@ -106,6 +107,50 @@ class ChatViewController: MessagesViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         self.messageInputBar.inputTextView.becomeFirstResponder()
+        
+    }
+    
+    private func setupInputButton(){
+        //let button = InputBarButtonItem(frame: CGRect(x: 0, y: 0, width: 35, height: 35))
+        let button = InputBarButtonItem()
+        button.setSize(CGSize(width: 35, height: 35), animated: false)
+        button.setImage(UIImage(systemName: "paperclip"), for: .normal)
+        
+        button.onTouchUpInside { [weak self] _ in
+            self?.presentInputActionSheet()
+        }
+        
+        messageInputBar.setLeftStackViewWidthConstant(to: 36, animated: false)
+        messageInputBar.setStackViewItems([button], forStack: .left, animated: false)
+    }
+    
+    private func presentInputActionSheet(){
+        let actionSheet = UIAlertController(title: "Attach media", message: "What would you like attach", preferredStyle: .actionSheet)
+        actionSheet.addAction(UIAlertAction(title: "Photo", style: .default, handler: { [weak self] _ in
+            self?.presentPhotoPicker()
+        }))
+        
+        actionSheet.addAction(UIAlertAction(title: "Video", style: .default, handler: { [weak self] _ in
+            
+        }))
+        actionSheet.addAction(UIAlertAction(title: "Audio", style: .default, handler: { [weak self] _ in
+            
+        }))
+        actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { [weak self] _ in
+            
+        }))
+        
+        present(actionSheet, animated: true, completion: nil)
+    }
+    
+    func presentPhotoPicker(){
+        var config = PHPickerConfiguration()
+        config.selectionLimit = 1
+        config.filter = .images
+        
+        let vc = PHPickerViewController(configuration: config)
+        vc.delegate = self
+        present(vc, animated: true)
     }
     
 }
@@ -160,4 +205,25 @@ extension ChatViewController: InputBarAccessoryViewDelegate{
                                              otherUserName: selfSender.displayName,
                                              senderEmail: safeEmail)
     }
+}
+
+
+extension ChatViewController: PHPickerViewControllerDelegate {
+    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        picker.dismiss(animated: true) {
+            //TODO: use the image data
+            guard let result = results.first else{ return }
+            let provider = result.itemProvider
+            
+            provider.loadObject(ofClass: UIImage.self) { imageMaybe, error in
+                if let image = imageMaybe {
+                    print("Debug: here is the image \(image)")
+                }else{
+                    print("Debug: cannot load the image user picked")
+                }
+            }
+        }
+        
+    }
+    
 }

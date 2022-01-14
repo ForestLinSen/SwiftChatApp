@@ -228,6 +228,7 @@ class LoginViewController: UIViewController {
                 }
             }
             
+            print("Debug: login user email \(UserDefaults.standard.string(forKey: "user_email"))")
             self?.navigationController?.dismiss(animated: true, completion: nil)
             
             
