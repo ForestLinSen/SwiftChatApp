@@ -286,7 +286,7 @@ class LoginViewController: UIViewController {
                               
                               URLSession.shared.dataTask(with: url) { data, res, error in
                                   guard let data = data else { return }
-                                  StorageManager.shared.uploadProfilePicture(with: data, fileName: chatUser.profilePictureName) { result in
+                                  StorageManager.shared.uploadPictureToStorage(with: data, uploadType: .profileImages, fileName: chatUser.profilePictureName) { result in
                                       switch result {
                                       case .success(let profileUrl):
                                           UserDefaults.standard.set(profileUrl, forKey: "profile_picture")
@@ -413,7 +413,7 @@ extension LoginViewController: LoginButtonDelegate{
                             URLSession.shared.dataTask(with: url) { data, res, error in
                                 guard let data = data else { return }
                                 
-                                StorageManager.shared.uploadProfilePicture(with: data, fileName: fbUser.profilePictureName) { result in
+                                StorageManager.shared.uploadPictureToStorage(with: data, uploadType: .profileImages, fileName: fbUser.profilePictureName) { result in
                                     switch result{
                                     case .success(let imageUrl):
                                         print("Debug : download url\(imageUrl)")

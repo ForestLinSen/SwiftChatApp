@@ -56,6 +56,16 @@ class ChatViewController: MessagesViewController{
 //                                sentDate: Date(), otherUserId: "Dummy Id",
 //                                kind: .text("Hello world Hello world Hello world")))
         
+//        let dummyPhotoMessage = PhotoMessage(url: nil,
+//                                             image: UIImage(systemName: "plus"),
+//                                             placeholderImage: UIImage(systemName: "plus")!,
+//                                             size: CGSize(width: 200, height: 200))
+//
+//        messages.append(Message(sender: selfSender,
+//                                messageId: "2",
+//                                sentDate: Date(), otherUserId: "Dummy Id",
+//                                kind: .photo(dummyPhotoMessage)))
+        
         self.messagesCollectionView.messagesDataSource = self
         self.messagesCollectionView.messagesLayoutDelegate = self
         self.messagesCollectionView.messagesDisplayDelegate = self
@@ -215,15 +225,36 @@ extension ChatViewController: PHPickerViewControllerDelegate {
             guard let result = results.first else{ return }
             let provider = result.itemProvider
             
-            provider.loadObject(ofClass: UIImage.self) { imageMaybe, error in
-                if let image = imageMaybe {
-                    print("Debug: here is the image \(image)")
+            
+            
+            provider.loadObject(ofClass: UIImage.self) { [weak self] image, error in
+                
+                guard let strongSelf = self else { return }
+                
+                if let image = image as? UIImage{
+
+                    let dateFormatter = DateFormatter()
+                    dateFormatter.dateFormat = "YYYY-MM-dd HH:mm:ss"
+                    let date = dateFormatter.string(from: Date())
+                    
+                    let fileName = "conversation_\(strongSelf.safeEmail)_to_\(strongSelf.otherUserEmail)_\(date)"
+                    
+                    StorageManager.shared.uploadPictureToStorage(with: image.pngData()!,
+                                                                 uploadType: .chatImages,
+                                                                 fileName: fileName) { result in
+                        switch result{
+                        case .success(let fileName):
+                            print("Debug: chat image uploaded \(fileName)")
+                        case .failure(_):
+                            print("Debug: cannot upload chat image")
+                        }
+                    }
                 }else{
-                    print("Debug: cannot load the image user picked")
+                    print("Debug: cannot load the image user picked: \(image)")
                 }
             }
         }
-        
     }
+
     
 }

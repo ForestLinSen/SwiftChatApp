@@ -14,15 +14,25 @@ final class StorageManager{
     
     public typealias UploadPictureCompletion = (Result<String, Error>) -> Void
     
-    func uploadProfilePicture(with data: Data, fileName: String, completion: @escaping UploadPictureCompletion){
-        storage.child("images/\(fileName)").putData(data, metadata: nil) { metaData, error in
+    func uploadPictureToStorage(with data: Data, uploadType: StorageUploadPath, fileName: String, completion: @escaping UploadPictureCompletion){
+        
+        let path: String
+        
+        switch uploadType {
+        case .profileImages:
+            path = "\(uploadType.rawValue)/\(fileName)"
+        case .chatImages:
+            path = "\(uploadType.rawValue)/\(K.currentUserSafeEmail)/\(fileName)"
+        }
+        
+        storage.child(path).putData(data, metadata: nil) { metaData, error in
             guard error == nil else{
                 print("Debug: failed to upload to firebase: \(error?.localizedDescription)")
                 completion(.failure(StorageErrors.failedToUpload))
                 return
             }
             
-            let reference = self.storage.child("images/\(fileName)").downloadURL {url, error in
+            let reference = self.storage.child(path).downloadURL {url, error in
                 guard let url = url else {
                     print("Debug: cannot get download url")
                     completion(.failure(StorageErrors.failedToGetDownloadURL))
@@ -52,5 +62,10 @@ final class StorageManager{
     public enum StorageErrors: Error{
         case failedToUpload
         case failedToGetDownloadURL
+    }
+    
+    public enum StorageUploadPath: String{
+        case profileImages = "profileImages"
+        case chatImages = "chatImages"
     }
 }

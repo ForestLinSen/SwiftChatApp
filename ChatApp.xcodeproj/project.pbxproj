@@ -29,6 +29,7 @@
 		B9EE310A27896885006C8311 /* K.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9EE310927896885006C8311 /* K.swift */; };
 		B9EEBCC72765DBF7009E0192 /* DataBaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9EEBCC62765DBF7009E0192 /* DataBaseManager.swift */; };
 		B9EEBCC92766065A009E0192 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B9EEBCC82766065A009E0192 /* GoogleService-Info.plist */; };
+		B9F3D4A127933192001BBD2E /* MediaItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9F3D4A027933192001BBD2E /* MediaItem.swift */; };
 		B9F47BBA2773626D003204AA /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9F47BB92773626D003204AA /* StorageManager.swift */; };
 		B9F47BBD277365A6003204AA /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = B9F47BBC277365A6003204AA /* FirebaseAuth */; };
 		B9F47BBF277365A6003204AA /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = B9F47BBE277365A6003204AA /* FirebaseDatabase */; };
@@ -57,6 +58,7 @@
 		B9EE310927896885006C8311 /* K.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = K.swift; sourceTree = "<group>"; };
 		B9EEBCC62765DBF7009E0192 /* DataBaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataBaseManager.swift; sourceTree = "<group>"; };
 		B9EEBCC82766065A009E0192 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
+		B9F3D4A027933192001BBD2E /* MediaItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaItem.swift; sourceTree = "<group>"; };
 		B9F47BB92773626D003204AA /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
 		F5955CF32732603500C1A5C5 /* ChatApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChatApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F5955CF62732603500C1A5C5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -104,6 +106,7 @@
 			isa = PBXGroup;
 			children = (
 				B9EEBCC62765DBF7009E0192 /* DataBaseManager.swift */,
+				B9F47BB92773626D003204AA /* StorageManager.swift */,
 			);
 			path = Manager;
 			sourceTree = "<group>";
@@ -166,7 +169,6 @@
 				F5955CF62732603500C1A5C5 /* AppDelegate.swift */,
 				F5955CF82732603500C1A5C5 /* SceneDelegate.swift */,
 				B944BFA12760F52D006CEDE3 /* Extensions.swift */,
-				B9F47BB92773626D003204AA /* StorageManager.swift */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -185,6 +187,7 @@
 				B9B70D43277C21440025FAEA /* Message.swift */,
 				B9E6CB5C277EEC43008FE433 /* Conversation.swift */,
 				B9EE310927896885006C8311 /* K.swift */,
+				B9F3D4A027933192001BBD2E /* MediaItem.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -348,6 +351,7 @@
 				B9290A9F2770DC4D002B7194 /* ChatViewController.swift in Sources */,
 				B9EE310A27896885006C8311 /* K.swift in Sources */,
 				B90FA02B2773334D00EB848C /* NewConversationViewController.swift in Sources */,
+				B9F3D4A127933192001BBD2E /* MediaItem.swift in Sources */,
 				F5955CF92732603500C1A5C5 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
