@@ -9,6 +9,7 @@ import UIKit
 import MessageKit
 import InputBarAccessoryView
 import PhotosUI
+import SDWebImage
 
 struct Sender: SenderType{
     var senderId: String
@@ -243,8 +244,38 @@ extension ChatViewController: PHPickerViewControllerDelegate {
                                                                  uploadType: .chatImages,
                                                                  fileName: fileName) { result in
                         switch result{
-                        case .success(let fileName):
-                            print("Debug: chat image uploaded \(fileName)")
+                        case .success(let imageUrl):
+                            print("Debug: chat image uploaded \(imageUrl)")
+                            
+                            guard let url = URL(string: imageUrl) else { return }
+                            
+                            URLSession.shared.dataTask(with: url) { data, _, _ in
+                                guard let data = data else { return }
+                                
+                                
+                                
+                                let dummyPhotoMessage = PhotoMessage(url: url,
+                                                                     image: UIImage(data: data),
+                                                                     placeholderImage: UIImage(systemName: "circle.bottomhalf.filled")!,
+                                                                     size: CGSize(width: 200, height: 200))
+                                
+                                
+                                strongSelf.messages.append(Message(sender: strongSelf.selfSender,
+                                                        messageId: "2",
+                                                        sentDate: Date(),
+                                                        otherUserId: "Dummy Id",
+                                                        kind: .photo(dummyPhotoMessage)))
+                                
+                                print("Debug: image message has been added to array \(data)")
+                                
+                                DispatchQueue.main.async {
+                                    strongSelf.messagesCollectionView.reloadData()
+                                }
+                                
+                                
+                            }.resume()
+                            
+
                         case .failure(_):
                             print("Debug: cannot upload chat image")
                         }
