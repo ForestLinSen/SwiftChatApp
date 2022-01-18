@@ -70,6 +70,7 @@ class ChatViewController: MessagesViewController{
         self.messagesCollectionView.messagesDataSource = self
         self.messagesCollectionView.messagesLayoutDelegate = self
         self.messagesCollectionView.messagesDisplayDelegate = self
+        self.messagesCollectionView.messageCellDelegate = self
         self.messageInputBar.delegate = self
         self.setupInputButton()
         
@@ -107,26 +108,21 @@ class ChatViewController: MessagesViewController{
                                   return
                               }
                         
-                        URLSession.shared.dataTask(with: url) { data, _, _ in
-                            guard let data = data else { return }
-                            let media = PhotoMessage(url: nil, image: UIImage(data: data),
-                                                     placeholderImage: UIImage(systemName: "rectangle.and.pencil.and.ellipsis")!,
-                                                     size: CGSize(width: 200, height: 200))
-                            
-                            
-                            let message = Message(sender: sender,
-                                                  messageId: sender.senderId,
-                                                  sentDate: date ?? Date(),
-                                                  otherUserId: "",
-                                                  kind: .photo(media))
-                            
-                            self?.messages.append(message)
-                            
-                            DispatchQueue.main.async {
-                                self?.messagesCollectionView.reloadData()
-                            }
-                            
-                        }.resume()
+                        let media = PhotoMessage(url: url,
+                                                 image: nil,
+                                                 placeholderImage: UIImage(systemName: "rectangle.and.pencil.and.ellipsis")!,
+                                                 size: CGSize(width: 200, height: 200))
+                        
+                        let message = Message(sender: sender,
+                                              messageId: sender.senderId,
+                                              sentDate: date ?? Date(),
+                                              otherUserId: "",
+                                              kind: .photo(media))
+                        
+                        self?.messages.append(message)
+
+                        self?.messagesCollectionView.reloadData()
+
                     }else{
                         let message = Message(sender: sender,
                                               messageId: sender.senderId,
@@ -208,6 +204,38 @@ extension ChatViewController: MessagesDataSource, MessagesLayoutDelegate, Messag
         return messages.count
     }
     
+    func configureMediaMessageImageView(_ imageView: UIImageView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) {
+        switch message.kind{
+        case .photo(let mediaUrl):
+            guard let url = mediaUrl.url else { return }
+            imageView.sd_setImage(with: url, completed: nil)
+        default:
+            break
+        }
+    }
+}
+
+extension ChatViewController: MessageCellDelegate{
+    func didTapImage(in cell: MessageCollectionViewCell) {
+        guard let indexPath = self.messagesCollectionView.indexPath(for: cell) else { return }
+        let message = self.messages[indexPath.row]
+        
+        switch message.kind{
+        case .photo(let mediaUrl):
+            guard let url = mediaUrl.url else { return }
+            
+            let vc = ImageViewController(imgUrl: url)
+//            let nv = UINavigationController(rootViewController: vc)
+//            nv.modalPresentationStyle = .fullScreen
+//            self.present(nv, animated: true, completion: nil)
+            vc.modalPresentationStyle = .fullScreen
+            self.navigationController?.pushViewController(vc, animated: false)
+            
+        default:
+            break
+        }
+        
+    }
 }
 
 extension ChatViewController: InputBarAccessoryViewDelegate{
@@ -245,6 +273,8 @@ extension ChatViewController: InputBarAccessoryViewDelegate{
                                              otherUserName: selfSender.displayName,
                                              senderEmail: safeEmail)
     }
+    
+
 }
 
 

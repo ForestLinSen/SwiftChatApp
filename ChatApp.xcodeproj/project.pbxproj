@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		B90FA02B2773334D00EB848C /* NewConversationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90FA02A2773334D00EB848C /* NewConversationViewController.swift */; };
+		B9162E6F2796A9FF0046DD72 /* ImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9162E6E2796A9FF0046DD72 /* ImageViewController.swift */; };
 		B91FB32D275FBFB50007DC08 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B91FB32C275FBFB50007DC08 /* LoginViewController.swift */; };
 		B91FB32F275FBFE50007DC08 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B91FB32E275FBFE50007DC08 /* RegisterViewController.swift */; };
 		B9290A9F2770DC4D002B7194 /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9290A9E2770DC4D002B7194 /* ChatViewController.swift */; };
@@ -45,6 +46,7 @@
 
 /* Begin PBXFileReference section */
 		B90FA02A2773334D00EB848C /* NewConversationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewConversationViewController.swift; sourceTree = "<group>"; };
+		B9162E6E2796A9FF0046DD72 /* ImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageViewController.swift; sourceTree = "<group>"; };
 		B91FB32C275FBFB50007DC08 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		B91FB32E275FBFE50007DC08 /* RegisterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
 		B9290A9E2770DC4D002B7194 /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
@@ -196,6 +198,7 @@
 			isa = PBXGroup;
 			children = (
 				F5955D0F27329CE000C1A5C5 /* StoryBoards */,
+				B9162E6E2796A9FF0046DD72 /* ImageViewController.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -346,6 +349,7 @@
 				F5955CF72732603500C1A5C5 /* AppDelegate.swift in Sources */,
 				B981753927688E6A001C0FDA /* ProfileViewController.swift in Sources */,
 				B9B70D42277C158C0025FAEA /* Chatuser.swift in Sources */,
+				B9162E6F2796A9FF0046DD72 /* ImageViewController.swift in Sources */,
 				B9B70D44277C21440025FAEA /* Message.swift in Sources */,
 				B9E6CB5B277EAD30008FE433 /* ConversationTableViewCell.swift in Sources */,
 				B9290A9F2770DC4D002B7194 /* ChatViewController.swift in Sources */,
