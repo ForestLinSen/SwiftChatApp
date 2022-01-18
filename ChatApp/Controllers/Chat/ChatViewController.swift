@@ -98,19 +98,48 @@ class ChatViewController: MessagesViewController{
                         sender = self?.selfSender as! SenderType
                         print("Debug: this message sender ID \(sender.senderId)")
                     }else{
-                        
                         sender = Sender(senderId: message.senderEmail, displayName: self?.otherUserName ?? "", photoURL: "")
                     }
-
-                    self?.messages.append(Message(sender: sender,
+                                 
+                    if message.type == TypeOfMessage.photo.rawValue{
+                        guard let mediaUrl = message.mediaUrl,
+                              let url = URL(string: mediaUrl) else{
+                                  return
+                              }
+                        
+                        URLSession.shared.dataTask(with: url) { data, _, _ in
+                            guard let data = data else { return }
+                            let media = PhotoMessage(url: nil, image: UIImage(data: data),
+                                                     placeholderImage: UIImage(systemName: "rectangle.and.pencil.and.ellipsis")!,
+                                                     size: CGSize(width: 200, height: 200))
+                            
+                            
+                            let message = Message(sender: sender,
                                                   messageId: sender.senderId,
                                                   sentDate: date ?? Date(),
                                                   otherUserId: "",
-                                                  kind: .text(message.text)))
-
+                                                  kind: .photo(media))
+                            
+                            self?.messages.append(message)
+                            
+                            DispatchQueue.main.async {
+                                self?.messagesCollectionView.reloadData()
+                            }
+                            
+                        }.resume()
+                    }else{
+                        let message = Message(sender: sender,
+                                              messageId: sender.senderId,
+                                              sentDate: date ?? Date(),
+                                              otherUserId: "",
+                                              kind: .text(message.text ?? ""))
+                        
+                        self?.messages.append(message)
+                        self?.messagesCollectionView.reloadData()
+                    }
                 }
                 
-                self?.messagesCollectionView.reloadData()
+                //self?.messagesCollectionView.reloadData()
             }
         }
     }
@@ -260,11 +289,20 @@ extension ChatViewController: PHPickerViewControllerDelegate {
                                                                      size: CGSize(width: 200, height: 200))
                                 
                                 
-                                strongSelf.messages.append(Message(sender: strongSelf.selfSender,
-                                                        messageId: "2",
-                                                        sentDate: Date(),
-                                                        otherUserId: "Dummy Id",
-                                                        kind: .photo(dummyPhotoMessage)))
+                                let toUploadMessage = Message(sender: strongSelf.selfSender,
+                                                              messageId: "2",
+                                                              sentDate: Date(),
+                                                              otherUserId: "Dummy Id",
+                                                              kind: .photo(dummyPhotoMessage))
+                                
+                                strongSelf.messages.append(toUploadMessage)
+                                
+                                DatabaseManager.shared.uploadMessage(safeEmail: strongSelf.safeEmail,
+                                                                     message: toUploadMessage,
+                                                                     otherUserEmail: strongSelf.otherUserEmail ,
+                                                                     otherUserName: strongSelf.otherUserName,
+                                                                     senderEmail: strongSelf.safeEmail,
+                                                                     type: .photo)
                                 
                                 print("Debug: image message has been added to array \(data)")
                                 

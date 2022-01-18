@@ -9,6 +9,7 @@ import Foundation
 import FirebaseDatabase
 import CoreMedia
 import AVFoundation
+import MessageKit
 
 
 final class DatabaseManager{
@@ -31,7 +32,8 @@ extension DatabaseManager{
                               message: Message,
                               otherUserEmail: String,
                               otherUserName: String,
-                              senderEmail: String){
+                              senderEmail: String,
+                              type: TypeOfMessage = .text){
         
         database.child("\(safeEmail)/conversation/\(otherUserEmail)").observeSingleEvent(of: .value) {[weak self] snapShot in
             // all the messages
@@ -41,7 +43,8 @@ extension DatabaseManager{
             let sendMessage: [String: String] = [
                 "content": message.message,
                 "date": message.dateString,
-                "senderEmail": senderEmail
+                "senderEmail": senderEmail,
+                "type": type.rawValue
             ]
             
             var uploadData: [String: Any]
@@ -96,7 +99,7 @@ extension DatabaseManager{
    
             let latestMessageDict = data["latest_message"] as? [String: String],
             let date =  latestMessageDict["date"],
-            let text = latestMessageDict["content"],
+            let content = latestMessageDict["content"],
             let otherUserName = data["other_user_name"] as? String,
             let otherUserEmail = data["other_user_email"] as? String,
             let messagesDict = data["messages"] as? [[String: String]] else{
@@ -105,8 +108,13 @@ extension DatabaseManager{
                 return
             }
             
-            let latestMessage = LatestMessage(date: date, text: text)
-            let messages = messagesDict.compactMap {Messages(date: $0["date"] ?? "No date found", text: $0["content"] ?? "", senderEmail: $0["senderEmail"] ?? "no sender email found")}
+            let latestMessage = LatestMessage(date: date, text: content)
+            
+            let messages = messagesDict.compactMap {Messages(date: $0["date"] ?? "No date found",
+                                                             text: $0["content"] ?? "",
+                                                             mediaUrl: $0["content"] ?? "",
+                                                             type: $0["type"] ?? TypeOfMessage.text.rawValue,
+                                                             senderEmail: $0["senderEmail"] ?? "no sender email found")}
             
             let conversation = Conversation(id: id, otherUserName: otherUserName, otherUserEmail: otherUserEmail, latestMessage: latestMessage, messages: messages)
             
@@ -141,7 +149,11 @@ extension DatabaseManager{
                           return nil
                       }
                 
-                let messagesCollection = messages.compactMap{Messages(date: $0["content"] ?? "no date", text: $0["content"] ?? "no content", senderEmail: $0["senderEmail"] ?? "no sender email found")}
+                let messagesCollection = messages.compactMap{Messages(date: $0["date"] ?? "no date",
+                                                                      text: $0["content"] ?? "no content",
+                                                                      mediaUrl: $0["content"] ?? "no content",
+                                                                      type: $0["type"] ?? TypeOfMessage.text.rawValue,
+                                                                      senderEmail: $0["senderEmail"] ?? "no sender email found")}
                 
                 let conv = Conversation(id: id, otherUserName: otherUserName, otherUserEmail: otherUserEmail, latestMessage: LatestMessage(date: date, text: content), messages: messagesCollection)
                 

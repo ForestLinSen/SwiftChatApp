@@ -24,6 +24,8 @@ struct LatestMessage{
 
 struct Messages{
     let date: String
-    let text: String
+    let text: String?
+    let mediaUrl: String?
+    let type: String
     let senderEmail: String
 }

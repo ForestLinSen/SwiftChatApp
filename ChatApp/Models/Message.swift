@@ -8,6 +8,11 @@
 import Foundation
 import MessageKit
 
+enum TypeOfMessage: String{
+    case text = "text"
+    case photo = "photo"
+}
+
 struct Message: MessageType{
     var sender: SenderType
     var messageId: String
@@ -28,7 +33,7 @@ struct Message: MessageType{
         case .attributedText(let nSAttributedString):
             break
         case .photo(let mediaItem):
-            break
+            return mediaItem.url?.absoluteString ?? ""
         case .video(let mediaItem):
             break
         case .location(let locationItem):
