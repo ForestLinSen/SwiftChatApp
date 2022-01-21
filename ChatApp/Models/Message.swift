@@ -11,6 +11,7 @@ import MessageKit
 enum TypeOfMessage: String{
     case text = "text"
     case photo = "photo"
+    case video = "video"
 }
 
 struct Message: MessageType{

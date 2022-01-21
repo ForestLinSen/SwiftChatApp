@@ -14,7 +14,7 @@ final class StorageManager{
     
     public typealias UploadPictureCompletion = (Result<String, Error>) -> Void
     
-    func uploadPictureToStorage(with data: Data, uploadType: StorageUploadPath, fileName: String, completion: @escaping UploadPictureCompletion){
+    func uploadMediaToStorage(with fileUrl: URL, uploadType: StorageUploadPath, fileName: String, completion: @escaping UploadPictureCompletion){
         
         let path: String
         
@@ -22,6 +22,44 @@ final class StorageManager{
         case .profileImages:
             path = "\(uploadType.rawValue)/\(fileName)"
         case .chatImages:
+            path = "\(uploadType.rawValue)/\(K.currentUserSafeEmail)/\(fileName)"
+        case .chatVideos:
+            path = "\(uploadType.rawValue)/\(K.currentUserSafeEmail)/\(fileName)"
+        }
+        
+        storage.child(path).putFile(from: fileUrl, metadata: nil) { metaData, error in
+            guard error == nil else{
+                print("Debug: failed to upload to firebase: \(error?.localizedDescription)")
+                completion(.failure(StorageErrors.failedToUpload))
+                return
+            }
+            
+            self.storage.child(path).downloadURL {url, error in
+                guard let url = url else {
+                    print("Debug: cannot get download url")
+                    completion(.failure(StorageErrors.failedToGetDownloadURL))
+                    return
+                }
+                
+                let urlString = url.absoluteString
+                print("Debug: download url: \(urlString)")
+                completion(.success(urlString))
+            }
+        }
+        
+    }
+    
+    func uploadMediaToStorage(with data: Data, uploadType: StorageUploadPath, fileName: String, completion: @escaping UploadPictureCompletion){
+        
+        
+        let path: String
+        
+        switch uploadType {
+        case .profileImages:
+            path = "\(uploadType.rawValue)/\(fileName)"
+        case .chatImages:
+            path = "\(uploadType.rawValue)/\(K.currentUserSafeEmail)/\(fileName)"
+        case .chatVideos:
             path = "\(uploadType.rawValue)/\(K.currentUserSafeEmail)/\(fileName)"
         }
         
@@ -32,7 +70,7 @@ final class StorageManager{
                 return
             }
             
-            let reference = self.storage.child(path).downloadURL {url, error in
+            self.storage.child(path).downloadURL {url, error in
                 guard let url = url else {
                     print("Debug: cannot get download url")
                     completion(.failure(StorageErrors.failedToGetDownloadURL))
@@ -67,5 +105,6 @@ final class StorageManager{
     public enum StorageUploadPath: String{
         case profileImages = "profileImages"
         case chatImages = "chatImages"
+        case chatVideos = "chatVideos"
     }
 }

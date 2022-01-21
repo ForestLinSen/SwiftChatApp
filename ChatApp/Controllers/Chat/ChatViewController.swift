@@ -47,25 +47,25 @@ class ChatViewController: MessagesViewController{
     override func viewDidLoad() {
         super.viewDidLoad()
         
-//        messages.append(Message(sender: selfSender,
-//                                messageId: "2",
-//                                sentDate: Date(), otherUserId: "Dummy Id",
-//                                kind: .text("Hello world")))
-//
-//        messages.append(Message(sender: selfSender,
-//                                messageId: "2",
-//                                sentDate: Date(), otherUserId: "Dummy Id",
-//                                kind: .text("Hello world Hello world Hello world")))
+        //        messages.append(Message(sender: selfSender,
+        //                                messageId: "2",
+        //                                sentDate: Date(), otherUserId: "Dummy Id",
+        //                                kind: .text("Hello world")))
+        //
+        //        messages.append(Message(sender: selfSender,
+        //                                messageId: "2",
+        //                                sentDate: Date(), otherUserId: "Dummy Id",
+        //                                kind: .text("Hello world Hello world Hello world")))
         
-//        let dummyPhotoMessage = PhotoMessage(url: nil,
-//                                             image: UIImage(systemName: "plus"),
-//                                             placeholderImage: UIImage(systemName: "plus")!,
-//                                             size: CGSize(width: 200, height: 200))
-//
-//        messages.append(Message(sender: selfSender,
-//                                messageId: "2",
-//                                sentDate: Date(), otherUserId: "Dummy Id",
-//                                kind: .photo(dummyPhotoMessage)))
+        //        let dummyPhotoMessage = PhotoMessage(url: nil,
+        //                                             image: UIImage(systemName: "plus"),
+        //                                             placeholderImage: UIImage(systemName: "plus")!,
+        //                                             size: CGSize(width: 200, height: 200))
+        //
+        //        messages.append(Message(sender: selfSender,
+        //                                messageId: "2",
+        //                                sentDate: Date(), otherUserId: "Dummy Id",
+        //                                kind: .photo(dummyPhotoMessage)))
         
         self.messagesCollectionView.messagesDataSource = self
         self.messagesCollectionView.messagesLayoutDelegate = self
@@ -86,7 +86,7 @@ class ChatViewController: MessagesViewController{
                     let dateFormatter = DateFormatter()
                     dateFormatter.dateFormat = "YYYY-MM-dd HH:mm:ss"
                     let date = dateFormatter.date(from: message.date)
-    
+                    
                     // self?.selfSender as! SenderType
                     
                     //if message.senderEm
@@ -101,7 +101,7 @@ class ChatViewController: MessagesViewController{
                     }else{
                         sender = Sender(senderId: message.senderEmail, displayName: self?.otherUserName ?? "", photoURL: "")
                     }
-                                 
+                    
                     if message.type == TypeOfMessage.photo.rawValue{
                         guard let mediaUrl = message.mediaUrl,
                               let url = URL(string: mediaUrl) else{
@@ -120,10 +120,32 @@ class ChatViewController: MessagesViewController{
                                               kind: .photo(media))
                         
                         self?.messages.append(message)
-
+                        
                         self?.messagesCollectionView.reloadData()
-
-                    }else{
+                        
+                    }else if message.type == TypeOfMessage.video.rawValue{
+                        guard let mediaUrl = message.mediaUrl,
+                              let url = URL(string: mediaUrl) else{
+                                  return
+                              }
+                        
+                        let media = PhotoMessage(url: url,
+                                                 image: nil,
+                                                 placeholderImage: UIImage(named: "VideoPlaceholder")!,
+                                                 size: CGSize(width: 200, height: 200))
+                        
+                        let message = Message(sender: sender,
+                                              messageId: sender.senderId,
+                                              sentDate: date ?? Date(),
+                                              otherUserId: "",
+                                              kind: .video(media))
+                        
+                        self?.messages.append(message)
+                        
+                        self?.messagesCollectionView.reloadData()
+                    }
+                    
+                    else{
                         let message = Message(sender: sender,
                                               messageId: sender.senderId,
                                               sentDate: date ?? Date(),
@@ -163,11 +185,11 @@ class ChatViewController: MessagesViewController{
     private func presentInputActionSheet(){
         let actionSheet = UIAlertController(title: "Attach media", message: "What would you like attach", preferredStyle: .actionSheet)
         actionSheet.addAction(UIAlertAction(title: "Photo", style: .default, handler: { [weak self] _ in
-            self?.presentPhotoPicker()
+            self?.presentMediaPicker(type: .photo)
         }))
         
         actionSheet.addAction(UIAlertAction(title: "Video", style: .default, handler: { [weak self] _ in
-            
+            self?.presentMediaPicker(type: .video)
         }))
         actionSheet.addAction(UIAlertAction(title: "Audio", style: .default, handler: { [weak self] _ in
             
@@ -179,10 +201,18 @@ class ChatViewController: MessagesViewController{
         present(actionSheet, animated: true, completion: nil)
     }
     
-    func presentPhotoPicker(){
+    func presentMediaPicker(type: TypeOfMessage){
         var config = PHPickerConfiguration()
         config.selectionLimit = 1
-        config.filter = .images
+        
+        switch type {
+        case .photo:
+            config.filter = .images
+        case .video:
+            config.filter = .videos
+        default:
+            break
+        }
         
         let vc = PHPickerViewController(configuration: config)
         vc.delegate = self
@@ -225,9 +255,6 @@ extension ChatViewController: MessageCellDelegate{
             guard let url = mediaUrl.url else { return }
             
             let vc = ImageViewController(imgUrl: url)
-//            let nv = UINavigationController(rootViewController: vc)
-//            nv.modalPresentationStyle = .fullScreen
-//            self.present(nv, animated: true, completion: nil)
             vc.modalPresentationStyle = .fullScreen
             self.navigationController?.pushViewController(vc, animated: false)
             
@@ -243,7 +270,7 @@ extension ChatViewController: InputBarAccessoryViewDelegate{
         print("Debug: user input \(text)")
         // Upload the text to the database
         // Database design:
-
+        
         let date = Date()
         let calendar = Calendar.current
         let time = calendar.dateComponents([.year, .month, .day, .hour, .minute, .second],
@@ -259,7 +286,11 @@ extension ChatViewController: InputBarAccessoryViewDelegate{
         
         print("Debug: current safe email \(safeEmail)")
         
-        let message = Message(sender: selfSender, messageId: messageId, sentDate: Date(), otherUserId: self.otherUserEmail, kind: .text(text))
+        let message = Message(sender: selfSender,
+                              messageId: messageId,
+                              sentDate: Date(),
+                              otherUserId: self.otherUserEmail,
+                              kind: .text(text))
         
         DatabaseManager.shared.uploadMessage(safeEmail: safeEmail,
                                              message: message,
@@ -274,86 +305,114 @@ extension ChatViewController: InputBarAccessoryViewDelegate{
                                              senderEmail: safeEmail)
     }
     
-
+    
 }
 
 
 extension ChatViewController: PHPickerViewControllerDelegate {
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        
+        // https://developer.apple.com/forums/thread/652496
+        
         picker.dismiss(animated: true) {
             //TODO: use the image data
             guard let result = results.first else{ return }
             let provider = result.itemProvider
-            
-            
-            
-            provider.loadObject(ofClass: UIImage.self) { [weak self] image, error in
-                
-                guard let strongSelf = self else { return }
-                
-                if let image = image as? UIImage{
-
+ 
+            // UTType.movie.identifier
+            if(provider.hasItemConformingToTypeIdentifier("public.movie")){
+                provider.loadItem(forTypeIdentifier: "public.movie", options: nil) {[weak self] videoURL, error in
+                    guard let url = videoURL as? NSURL,
+                          let fileUrl = url.filePathURL else { return }
+                    guard let strongSelf = self else { return }
+                    
+                    print("Debug: video file url \(fileUrl)")
+                    
                     let dateFormatter = DateFormatter()
                     dateFormatter.dateFormat = "YYYY-MM-dd HH:mm:ss"
                     let date = dateFormatter.string(from: Date())
-                    
                     let fileName = "conversation_\(strongSelf.safeEmail)_to_\(strongSelf.otherUserEmail)_\(date)"
                     
-                    StorageManager.shared.uploadPictureToStorage(with: image.pngData()!,
-                                                                 uploadType: .chatImages,
-                                                                 fileName: fileName) { result in
+                    
+                    StorageManager.shared.uploadMediaToStorage(with: fileUrl, uploadType: .chatVideos, fileName: fileName) { result in
                         switch result{
-                        case .success(let imageUrl):
-                            print("Debug: chat image uploaded \(imageUrl)")
-                            
-                            guard let url = URL(string: imageUrl) else { return }
-                            
-                            URLSession.shared.dataTask(with: url) { data, _, _ in
-                                guard let data = data else { return }
-                                
-                                
-                                
-                                let dummyPhotoMessage = PhotoMessage(url: url,
-                                                                     image: UIImage(data: data),
-                                                                     placeholderImage: UIImage(systemName: "circle.bottomhalf.filled")!,
-                                                                     size: CGSize(width: 200, height: 200))
-                                
-                                
-                                let toUploadMessage = Message(sender: strongSelf.selfSender,
-                                                              messageId: "2",
-                                                              sentDate: Date(),
-                                                              otherUserId: "Dummy Id",
-                                                              kind: .photo(dummyPhotoMessage))
-                                
-                                strongSelf.messages.append(toUploadMessage)
-                                
-                                DatabaseManager.shared.uploadMessage(safeEmail: strongSelf.safeEmail,
-                                                                     message: toUploadMessage,
-                                                                     otherUserEmail: strongSelf.otherUserEmail ,
-                                                                     otherUserName: strongSelf.otherUserName,
-                                                                     senderEmail: strongSelf.safeEmail,
-                                                                     type: .photo)
-                                
-                                print("Debug: image message has been added to array \(data)")
-                                
-                                DispatchQueue.main.async {
-                                    strongSelf.messagesCollectionView.reloadData()
-                                }
-                                
-                                
-                            }.resume()
-                            
-
                         case .failure(_):
-                            print("Debug: cannot upload chat image")
+                            break
+                        case .success(let viedeoUrl):
+                            print("Debug: video url \(viedeoUrl)")
                         }
                     }
-                }else{
-                    print("Debug: cannot load the image user picked: \(image)")
+                    
+                }
+            }else{
+                provider.loadObject(ofClass: UIImage.self) { [weak self] image, error in
+                    
+                    guard let strongSelf = self else { return }
+                    
+                    if let image = image as? UIImage{
+                        
+                        let dateFormatter = DateFormatter()
+                        dateFormatter.dateFormat = "YYYY-MM-dd HH:mm:ss"
+                        let date = dateFormatter.string(from: Date())
+                        
+                        let fileName = "conversation_\(strongSelf.safeEmail)_to_\(strongSelf.otherUserEmail)_\(date)"
+                        
+                        StorageManager.shared.uploadMediaToStorage(with: image.pngData()!,
+                                                                     uploadType: .chatImages,
+                                                                     fileName: fileName) { result in
+                            switch result{
+                            case .success(let imageUrl):
+                                print("Debug: chat image uploaded \(imageUrl)")
+                                
+                                guard let url = URL(string: imageUrl) else { return }
+                                
+                                URLSession.shared.dataTask(with: url) { data, _, _ in
+                                    guard let data = data else { return }
+                                    
+                                    let dummyPhotoMessage = PhotoMessage(url: url,
+                                                                         image: UIImage(data: data),
+                                                                         placeholderImage: UIImage(systemName: "circle.bottomhalf.filled")!,
+                                                                         size: CGSize(width: 200, height: 200))
+                                    
+                                    
+                                    let toUploadMessage = Message(sender: strongSelf.selfSender,
+                                                                  messageId: "2",
+                                                                  sentDate: Date(),
+                                                                  otherUserId: "Dummy Id",
+                                                                  kind: .photo(dummyPhotoMessage))
+                                    
+                                    strongSelf.messages.append(toUploadMessage)
+                                    
+                                    DatabaseManager.shared.uploadMessage(safeEmail: strongSelf.safeEmail,
+                                                                         message: toUploadMessage,
+                                                                         otherUserEmail: strongSelf.otherUserEmail ,
+                                                                         otherUserName: strongSelf.otherUserName,
+                                                                         senderEmail: strongSelf.safeEmail,
+                                                                         type: .photo)
+                                    
+                                    print("Debug: image message has been added to array \(data)")
+                                    
+                                    DispatchQueue.main.async {
+                                        strongSelf.messagesCollectionView.reloadData()
+                                    }
+                                    
+                                    
+                                }.resume()
+                                
+                                
+                            case .failure(_):
+                                print("Debug: cannot upload chat image")
+                            }
+                        }
+                    }else{
+                        print("Debug: cannot load the image user picked: \(image)")
+                    }
                 }
             }
+            
+            
         }
     }
-
+    
     
 }

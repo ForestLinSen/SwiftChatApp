@@ -202,7 +202,7 @@ class RegisterViewController: UIViewController{
                             return
                         }
                         
-                        StorageManager.shared.uploadPictureToStorage(with: data, uploadType: .profileImages, fileName: newUser.profilePictureName) { result in
+                        StorageManager.shared.uploadMediaToStorage(with: data, uploadType: .profileImages, fileName: newUser.profilePictureName) { result in
                             switch result{
                             case .success(let imageUrl):
                                 print("Debug : download url\(imageUrl)")
