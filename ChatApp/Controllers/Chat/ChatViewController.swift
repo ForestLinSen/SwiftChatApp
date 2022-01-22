@@ -10,6 +10,8 @@ import MessageKit
 import InputBarAccessoryView
 import PhotosUI
 import SDWebImage
+//import AVFoundation
+import AVKit
 
 struct Sender: SenderType{
     var senderId: String
@@ -135,7 +137,7 @@ class ChatViewController: MessagesViewController{
                                                  size: CGSize(width: 200, height: 200))
                         
                         let message = Message(sender: sender,
-                                              messageId: sender.senderId,
+                                              messageId: dateFormatter.string(from: Date()),
                                               sentDate: date ?? Date(),
                                               otherUserId: "",
                                               kind: .video(media))
@@ -239,6 +241,15 @@ extension ChatViewController: MessagesDataSource, MessagesLayoutDelegate, Messag
         case .photo(let mediaUrl):
             guard let url = mediaUrl.url else { return }
             imageView.sd_setImage(with: url, completed: nil)
+            
+        case .video(let mediaItem):
+            
+            guard let url = mediaItem.url else { return }
+            
+            let vc = AVPlayerViewController()
+            vc.player = AVPlayer(url: url)
+            present(vc, animated: true, completion: nil)
+            
         default:
             break
         }
@@ -339,9 +350,35 @@ extension ChatViewController: PHPickerViewControllerDelegate {
                         case .failure(_):
                             break
                         case .success(let viedeoUrl):
-                            print("Debug: video url \(viedeoUrl)")
+                            guard let videoUrl = URL(string: viedeoUrl) else { return }
+                            let mediaItem = PhotoMessage(url: videoUrl,
+                                                         image: nil,
+                                                         placeholderImage: UIImage(systemName: "circle.bottomhalf.filled")!,
+                                                         size: CGSize(width: 200, height: 200))
+                            
+                            let toUploadMessage = Message(sender: strongSelf.selfSender,
+                                                          messageId: dateFormatter.string(from: Date()),
+                                                          sentDate: Date(),
+                                                          otherUserId: "Dummy Id",
+                                                          kind: .video(mediaItem))
+                            
+                            strongSelf.messages.append(toUploadMessage)
+                            
+                            DatabaseManager.shared.uploadMessage(safeEmail: strongSelf.safeEmail,
+                                                                 message: toUploadMessage,
+                                                                 otherUserEmail: strongSelf.otherUserEmail ,
+                                                                 otherUserName: strongSelf.otherUserName,
+                                                                 senderEmail: strongSelf.safeEmail,
+                                                                 type: .video)
+                            
+                            DispatchQueue.main.async {
+                                print("Debug: appended video")
+                                strongSelf.messagesCollectionView.reloadData()
+                            }
                         }
                     }
+                    
+                    
                     
                 }
             }else{
@@ -376,7 +413,7 @@ extension ChatViewController: PHPickerViewControllerDelegate {
                                     
                                     
                                     let toUploadMessage = Message(sender: strongSelf.selfSender,
-                                                                  messageId: "2",
+                                                                  messageId: dateFormatter.string(from: Date()),
                                                                   sentDate: Date(),
                                                                   otherUserId: "Dummy Id",
                                                                   kind: .photo(dummyPhotoMessage))

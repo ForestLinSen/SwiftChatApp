@@ -36,7 +36,7 @@ struct Message: MessageType{
         case .photo(let mediaItem):
             return mediaItem.url?.absoluteString ?? ""
         case .video(let mediaItem):
-            break
+            return mediaItem.url?.absoluteString ?? ""
         case .location(let locationItem):
             break
         case .emoji(let string):
